@@ -1,0 +1,37 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        { 
+            "type": "node", 
+            "request": "launch", 
+            "name": "test", 
+            "program": "${workspaceRoot}/node_modules/jasmine/bin/jasmine.js", 
+        /*    "args": [ 
+                "spec\\todoSpec.js" 
+            ], */
+            "env": { 
+                "NODE_PATH": "." 
+            } 
+       },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "npm run runtest",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run-script",
+                "test"
+            ],
+            "port": 9229,
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "runtestproject",
+            "program": "${workspaceFolder}/src/index.js"
+        }
+    ]
+}

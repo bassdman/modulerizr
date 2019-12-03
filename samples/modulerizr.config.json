@@ -1,0 +1,5 @@
+{
+    "src": "index.html",
+    "components": ["**/*.component.html"],
+    "dest": "./dest/"
+}

@@ -1,0 +1,21 @@
+{
+    "name": "modulerizr-example1-rendercomponent",
+    "version": "1.0.0",
+    "description": "Render a single component into an html-file",
+    "main": "index.js",
+    "scripts": {
+        "beforemodulerizr_1": "npm install",
+        "modulerizr_1": "modulerizr abc def"
+    },
+    "keywords": [
+        "test",
+        "component",
+        "render",
+        "modulerizr"
+    ],
+    "author": "Manuel Gelsen",
+    "license": "MIT",
+    "dependencies": {
+        "modulerizr": "../"
+    }
+}
