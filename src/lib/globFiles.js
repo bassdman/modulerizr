@@ -1,5 +1,5 @@
 const glob = require('glob');
-const foreachPromise = require('./foreachpromise');
+const foreachPromise = require('./foreachPromise');
 
 function globFiles(src, rootPath) {
     const files = [];
@@ -12,6 +12,13 @@ function globFiles(src, rootPath) {
                 .then(filesGlob => files.push(filesGlob));
         })
         .then(() => {
+            // schaut komisch aus, löst aber die Arrays in mehreren Hierarchien auf.
+            return files.join(',').split(',');
+        })
+        .then((_files) => {
+            if (_files.length == 1 && files[0] == '')
+                return [];
+
             // schaut komisch aus, löst aber die Arrays in mehreren Hierarchien auf.
             return files.join(',').split(',');
         });

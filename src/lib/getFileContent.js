@@ -1,4 +1,4 @@
-const foreachPromise = require("./foreachpromise");
+const foreachPromise = require("./foreachPromise");
 const fs = require('fs-extra');
 
 function getFileContent(_files, config = {}) {

@@ -1,4 +1,4 @@
-const foreachPromise = require('./foreachpromise');
+const foreachPromise = require('./foreachPromise');
 const path = require('path');
 const fs = require('fs-extra');
 

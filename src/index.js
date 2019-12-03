@@ -1,5 +1,7 @@
-const { writeFiles } = require("./lib/writeFiles");
+const { replaceComponentsInSrcFile } = require("./helpers/replaceComponentsInFile");
 
+const { writeFiles } = require("./lib/writeFiles");
+const foreachPromise = require('./lib/foreachPromise');
 const { getFileContent } = require("./lib/getFileContent");
 const { globFiles } = require("./lib/globFiles");
 
@@ -8,23 +10,34 @@ const HTMLParser = require('node-html-parser');
 async function modulerizr(config) {
     const files = { components: {}, src: {} };
 
-    const srcFiles = await globFiles(prepareConfigEntry(config.src), config._rootPath);
-    const componentFiles = await globFiles(prepareConfigEntry(config.components), config._rootPath);
+    const srcFileNames = await globFiles(prepareConfigEntry(config.src), config._rootPath);
+    const componentFileNames = await globFiles(prepareConfigEntry(config.components), config._rootPath);
 
-    const srcFilesConfig = await getFileContent(srcFiles, { mode: 'object' });
-    let componentFilesConfigs = await getFileContent(componentFiles, { mode: 'object' });
-    componentFilesConfigs = addComponentConfig(componentFilesConfigs);
-    let destFilesConfig = JSON.parse(JSON.stringify(srcFilesConfig));
-    //  destFilesConfig = replaceComponents(componentFilesConfigs)
+    const componentFiles = await getComponents(componentFileNames);
+    const srcFiles = await getFileContent(srcFileNames, { mode: 'object' });
+    const replacedDestFiles = replaceComponentsInSrcFiles(srcFiles, componentFiles);
 
-    console.log(componentFilesConfigs)
-    return writeFiles(config.dest, destFilesConfig);
+    return writeFiles(config.dest, replacedDestFiles);
 }
 
-function addComponentConfig(componentFiles) {
+function replaceComponentsInSrcFiles(srcFiles, components) {
+    const srcFileNames = Object.keys(srcFiles);
+    const replacedFiles = {};
+
+    for (let file of srcFileNames) {
+        const originalContent = srcFiles[file];
+        const replacedContent = replaceComponentsInSrcFile(originalContent, components);
+        replacedFiles[file] = replacedContent;
+    }
+    return replacedFiles;
+}
+
+async function getComponents(componentFiles) {
     const retVal = {};
-    Object.keys(componentFiles).forEach(fileName => {
-        const root = HTMLParser.parse(componentFiles[fileName].content);
+
+    await foreachPromise(componentFiles, async fileName => {
+        const fileContent = await getFileContent(prepareConfigEntry(fileName));
+        const root = HTMLParser.parse(fileContent);
         const template = root.querySelector('template');
 
         retVal[fileName] = Object.assign({ params: {} }, componentFiles[fileName], template.attributes);
@@ -35,7 +48,7 @@ function addComponentConfig(componentFiles) {
                 delete retVal[fileName][attributeKey];
             }
         })
-    })
+    });
 
     return retVal;
 }
