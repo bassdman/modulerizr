@@ -1,5 +1,6 @@
 {
     "src": "*.html",
     "components": ["**/*.component.html"],
-    "dest": "./dest/"
+    "dest": "./dest/",
+    "log": true
 }

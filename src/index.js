@@ -1,67 +1,77 @@
-const { replaceComponentsInSrcFile } = require("./helpers/replaceComponentsInFile");
-
+const { prepareConfigEntry } = require("./lib/prepareConfigEntry");
 const { writeFiles } = require("./lib/writeFiles");
-const foreachPromise = require('./lib/foreachPromise');
-const { getFileContent } = require("./lib/getFileContent");
 const { globFiles } = require("./lib/globFiles");
+const foreachPromise = require('./lib/foreachPromise');
+const { Store } = require('./lib/fileStore');
+const { extractComponentInfoPlugin } = require("./plugins/extractComponentInfoPlugin");
 
-const HTMLParser = require('node-html-parser');
-
-async function modulerizr(config) {
-    const files = { components: {}, src: {} };
+async function modulerizr(_config) {
+    const defaultConfig = require('../modulerizr.default.config.js');
+    const config = Object.assign(defaultConfig, _config);
 
     const srcFileNames = await globFiles(prepareConfigEntry(config.src), config._rootPath);
     const componentFileNames = await globFiles(prepareConfigEntry(config.components), config._rootPath);
 
-    const componentFiles = await getComponents(componentFileNames);
-    const srcFiles = await getFileContent(srcFileNames, { mode: 'object' });
-    const replacedDestFiles = replaceComponentsInSrcFiles(srcFiles, componentFiles);
+    const fileStore = new Store();
 
-    return writeFiles(config.dest, replacedDestFiles);
+    saveInStore(fileStore, 'src', srcFileNames);
+    saveInStore(fileStore, 'components', componentFileNames);
+
+    await applyFilePlugins('beforePlugin', fileStore, null, config);
+    await applyFilePlugins('componentPlugin', fileStore, 'components', config);
+    await applyFilePlugins('srcPlugin', fileStore, 'src', config);
+    await applyFilePlugins('plugin', fileStore, null, config);
+
+    await writeFiles(fileStore, config.dest);
+
+    return await applyFilePlugins('afterPlugin', fileStore, null, config);
 }
 
-function replaceComponentsInSrcFiles(srcFiles, components) {
-    const srcFileNames = Object.keys(srcFiles);
-    const replacedFiles = {};
+async function applyFilePlugins(name, fileStore, type, config) {
+    const systemPlugins = config[`_${name}s`] || [];
+    const publicPlugins = config[`${name}s`] || [];
+    const allPlugins = systemPlugins.concat(publicPlugins);
 
-    for (let file of srcFileNames) {
-        const originalContent = srcFiles[file];
-        const replacedContent = replaceComponentsInSrcFile(originalContent, components);
-        replacedFiles[file] = replacedContent;
-    }
-    return replacedFiles;
-}
+    if (config.log)
+        console.log(`start ${name}s `);
 
-async function getComponents(componentFiles) {
-    const retVal = {};
+    await foreachPromise(allPlugins, async plugin => {
+        if (config.log)
+            console.log(`   execute ${name} "${plugin.name}". `);
 
-    await foreachPromise(componentFiles, async fileName => {
-        const fileContent = await getFileContent(prepareConfigEntry(fileName));
-        const root = HTMLParser.parse(fileContent);
-        const template = root.querySelector('template');
+        if (type == null) {
+            return Promise.resolve(plugin(fileStore, config))
+        } else {
+            const files = fileStore.get(type);
+            console.log(files)
+            await foreachPromise(Object.values(files), async currentFile => {
+                const pluginResult = plugin(currentFile, fileStore, config);
 
-        retVal[fileName] = Object.assign({ params: {} }, componentFiles[fileName], template.attributes);
+                if (pluginResult == null)
+                    return null;
+                else if (pluginResult.then !== null) {
+                    const promisedPluginResult = await pluginResult;
+                    fileStore.set(type, currentFile.key, promisedPluginResult);
+                } else
+                    fileStore.set(type, currentFile.key, pluginResult);
 
-        Object.keys(template.attributes).forEach(attributeKey => {
-            if (attributeKey.startsWith('param-')) {
-                retVal[fileName].params[attributeKey.replace('param-', '')] = template.attributes[attributeKey];
-                delete retVal[fileName][attributeKey];
-            }
-        })
+                return pluginResult;
+            });
+        }
+        return;
     });
 
-    return retVal;
+    if (config.log)
+        console.log(`finished ${name}s \n----------`);
+
+    return;
 }
 
-function prepareConfigEntry(src) {
-    if (src == undefined)
-        throw new Error('modulerizr.config.src: src is undefined but required.');
-
-    if (Array.isArray(src))
-        return src;
-
-    return [src];
-
+function saveInStore(fileStore, type, fileNames) {
+    fileNames.forEach(file => {
+        fileStore.set(type, file, {
+            key: file
+        });
+    })
 }
-
 module.exports = modulerizr;
