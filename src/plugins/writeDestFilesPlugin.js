@@ -15,7 +15,10 @@ async function writeDestFilesPlugin(modulerizr) {
         return await fs.writeFile(filePath, fileContent);
     });
 
-    return fs.writeFile(path.join(destpath, 'modulerizr.config.json'), JSON.stringify({ src: modulerizr.get('src'), components: modulerizr.get('components'), config: modulerizr.config }, null, 1));
+    if (modulerizr.config.createDebugFile)
+        await fs.writeFile(path.join(destpath, 'modulerizr-debug.config.json'), JSON.stringify({ src: modulerizr.get('src'), components: modulerizr.get('components'), config: modulerizr.config }, null, 1));
+
+    return;
 }
 
 function removeLeadSubfoldersFromPath(configSrc, fileSrc) {
@@ -25,7 +28,7 @@ function removeLeadSubfoldersFromPath(configSrc, fileSrc) {
 
 writeDestFilesPlugin.metadata = {
     pluginType: "afterRender",
-    name: 'Internal-WriteFilesPlugin'
+    name: 'Internal-WriteDestFilesPlugin'
 }
 
 exports.writeDestFilesPlugin = writeDestFilesPlugin;
