@@ -61,3 +61,5 @@ typings/
 .next
 
 node_modules
+
+modulerizr-debug.config.json
