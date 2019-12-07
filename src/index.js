@@ -1,4 +1,3 @@
-const { writeFiles } = require("./lib/writeFiles");
 const { globFiles } = require("./lib/globFiles");
 const foreachPromise = require('./lib/foreachPromise');
 const { Modulerizr } = require('./lib/Modulerizr');
@@ -20,7 +19,8 @@ async function modulerizr(_config) {
     await executeFilePlugins('src', modulerizr, 'src');
 
     await executeFilePlugins('beforeRender', modulerizr, null, 'default');
-    await writeFiles(modulerizr, config.dest);
+
+
 
     return await executeFilePlugins('afterRender', modulerizr);
 }
@@ -30,7 +30,7 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
     const publicPlugins = getPlugins(modulerizr.config.plugins, pluginType, _default);
     const allPlugins = systemPlugins.concat(publicPlugins);
 
-    if (allPlugins.length == 0)
+    if (allPlugins.length == 0 && pluginType != 'render')
         modulerizr.log(`No ${pluginType}-plugins found.`)
 
     await foreachPromise(allPlugins, async plugin => {
@@ -44,14 +44,14 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
             await foreachPromise(Object.values(files), async currentFile => {
                 const pluginResult = plugin(modulerizr, currentFile);
 
-                if (pluginResult == null)
+                if (pluginResult == null) {
                     return null;
-                else if (pluginResult.then !== null) {
+                } else if (pluginResult.then !== null) {
                     const promisedPluginResult = await pluginResult;
                     modulerizr.set(dataType, currentFile.key, promisedPluginResult);
-                } else
+                } else {
                     modulerizr.set(dataType, currentFile.key, pluginResult);
-
+                }
                 return pluginResult;
             });
         }
@@ -83,7 +83,11 @@ function prepareConfigEntry(src) {
 function getPlugins(plugins = [], pluginType, _default) {
     return plugins.filter(plugin => {
         const currentPluginType = plugin.metadata ? plugin.metadata.pluginType : null;
-        return pluginType == currentPluginType || (_default && currentPluginType == null);
+
+        if (Array.isArray(currentPluginType)) {
+            return currentPluginType.includes(pluginType) || (_default && currentPluginType == null);
+        } else
+            return pluginType == currentPluginType || (_default && currentPluginType == null);
     });
 }
 

@@ -1,11 +1,21 @@
 const { extractComponentInfoPlugin } = require("./src/plugins/extractComponentInfoPlugin");
 const { extractSrcInfoPlugin } = require('./src/plugins/extractSrcInfoPlugin');
-const { replaceComponentsInSrcFilesPlugin } = require("./src/plugins/replaceComponentsInSrcFilesPlugin");
+const { findEmbeddedComponentsPlugin } = require("./src/plugins/findEmbeddedComponentsPlugin")
+const { renderComponentsPlugin } = require("./src/plugins/renderComponentsPlugin")
+const { writeDestFilesPlugin } = require("./src/plugins/writeDestFilesPlugin");
+
+
 
 module.exports = {
     "src": "index.html",
     "components": "**/*.component.html",
     "dest": "dest",
-    "wrapperTag": "div",
-    _plugins: [extractComponentInfoPlugin, extractSrcInfoPlugin, replaceComponentsInSrcFilesPlugin]
+    "defaultComponentWrapper": "div",
+    _plugins: [
+        extractComponentInfoPlugin,
+        extractSrcInfoPlugin,
+        findEmbeddedComponentsPlugin,
+        renderComponentsPlugin,
+        writeDestFilesPlugin
+    ]
 }

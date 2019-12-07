@@ -5,7 +5,7 @@ async function extractSrcInfoPlugin(modulerizr, currentFile) {
 
     const retObj = Object.assign({
         content,
-        raw: content,
+        original: content,
         path: currentFile.key
     }, currentFile);
 

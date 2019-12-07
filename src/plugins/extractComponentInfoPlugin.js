@@ -9,7 +9,7 @@ async function extractComponentInfoPlugin(modulerizr, currentFile) {
 
     const retVal = Object.assign({ params: {} }, currentFile, $template.attributes);
     retVal.content = $template.html();
-    retVal.raw = $.html($template);
+    retVal.original = $.html($template);
     retVal.name = $template.attr('name');
     const attributes = $template.get(0).attribs;
 
@@ -19,6 +19,7 @@ async function extractComponentInfoPlugin(modulerizr, currentFile) {
             delete retVal[attributeName];
         }
     })
+
     return retVal;
 }
 extractComponentInfoPlugin.metadata = {
