@@ -3,7 +3,7 @@ const files = {
     src: {}
 };
 
-function Store() {
+function Store(config) {
     return {
         setComponent(name, obj) {
             this.set('component', name, obj);
@@ -33,7 +33,7 @@ function Store() {
             if (!typeof obj == 'object')
                 throw new Error('Store.set(type,name,config): config must be an object.');
 
-            files[type][name] = obj;
+            files[type][name] = Object.assign((files[type][name] || {}), obj);
         },
         get(type, name) {
             if (type !== 'src' && type !== 'components')
@@ -46,6 +46,13 @@ function Store() {
 
             return files[type][name];
         },
+        log(text) {
+            if (!config.debug)
+                return;
+
+            console.log(text);
+
+        }
     }
 }
 

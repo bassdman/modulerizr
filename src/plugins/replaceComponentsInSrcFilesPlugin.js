@@ -4,7 +4,6 @@ function replaceComponentsInSrcFilesPlugin(currentFile, fileStore, config) {
 
     const originalContent = currentFile.content;
     const replacedContent = resolveComponents(currentFile, fileStore, config.wrapperTag);
-
     return {
         content: replacedContent
     }
@@ -17,21 +16,33 @@ function resolveComponents(srcFile, fileStore, wrapperTag = '<span>') {
     for (let componentName of componentNames) {
         const componentConfig = fileStore.get('components', componentName);
 
-        let $component = $(componentConfig.name);
-        const componentExists = $component !== null;
+        let $allComponents = $(componentConfig.name);
+        const componentExists = $allComponents.length > 0;
 
         if (!componentExists)
             continue;
 
-        if ($component)
+        $allComponents.each((i, e) => {
+            const componentId = Math.random().toString(36).substr(2, 5) + Math.random().toString(36).substr(2, 5);
 
-            if (wrapperTag !== '') {
-                $component.wrap(wrapperTag)
+            const $currentComp = $(e);
+
+            const componentAttributes = $currentComp.get(0).attribs || {};
+            console.log(componentAttributes)
+            const wrapper = getWrapperTag(componentAttributes.wrapper || wrapperTag);
+            if (wrapper != null) {
+                $currentComp.wrap(wrapper);
             }
-        $component.replaceWith(componentConfig.content);
+            $currentComp.replaceWith(componentConfig.content);
+        })
     }
 
     return $.html();
 }
 
+function getWrapperTag(componentWrapperTag, configWrapperTag) {
+    const initialWrapperTag = componentWrapperTag || configWrapperTag;
+    const modifiedWrapperTag = `<${initialWrapperTag}>`.replace('<<', '<').replace('>>', '>');
+    return modifiedWrapperTag;
+}
 exports.replaceComponentsInSrcFilesPlugin = replaceComponentsInSrcFilesPlugin;

@@ -1,22 +1,15 @@
-const { prepareConfigEntry } = require("./lib/prepareConfigEntry");
 const { writeFiles } = require("./lib/writeFiles");
 const { globFiles } = require("./lib/globFiles");
 const foreachPromise = require('./lib/foreachPromise');
-const { Store } = require('./lib/fileStore');
-const { extractComponentInfoPlugin } = require("./plugins/extractComponentInfoPlugin");
+const { Store } = require('./lib/Modulerizr');
 
 async function modulerizr(_config) {
     const defaultConfig = require('../modulerizr.default.config.js');
     const config = Object.assign(defaultConfig, _config);
-
-    const srcFileNames = await globFiles(prepareConfigEntry(config.src), config._rootPath);
-    const componentFileNames = await globFiles(prepareConfigEntry(config.components), config._rootPath);
-
     const fileStore = new Store();
 
-    saveInStore(fileStore, 'src', srcFileNames);
-    saveInStore(fileStore, 'components', componentFileNames);
-
+    await saveInStore('src', fileStore, config);
+    await saveInStore('components', fileStore, config);
     await applyFilePlugins('beforePlugin', fileStore, null, config);
     await applyFilePlugins('componentPlugin', fileStore, 'components', config);
     await applyFilePlugins('srcPlugin', fileStore, 'src', config);
@@ -43,7 +36,6 @@ async function applyFilePlugins(name, fileStore, type, config) {
             return Promise.resolve(plugin(fileStore, config))
         } else {
             const files = fileStore.get(type);
-            console.log(files)
             await foreachPromise(Object.values(files), async currentFile => {
                 const pluginResult = plugin(currentFile, fileStore, config);
 
@@ -67,11 +59,21 @@ async function applyFilePlugins(name, fileStore, type, config) {
     return;
 }
 
-function saveInStore(fileStore, type, fileNames) {
+async function saveInStore(type, fileStore, config) {
+    const fileNames = await globFiles(prepareConfigEntry(config[type]), config._rootPath);
     fileNames.forEach(file => {
         fileStore.set(type, file, {
             key: file
         });
     })
 }
+
+function prepareConfigEntry(src) {
+    if (src == undefined)
+        throw new Error('modulerizr.config.src: src is undefined but required.');
+    if (Array.isArray(src))
+        return src;
+    return [src];
+}
+
 module.exports = modulerizr;
