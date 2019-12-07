@@ -2,7 +2,7 @@ const cheerio = require('cheerio');
 const fs = require('fs-extra');
 
 
-async function extractComponentInfoPlugin(currentFile, fileStore, config) {
+async function extractComponentInfoPlugin(modulerizr, currentFile) {
     const fileContent = await fs.readFile(currentFile.key, "UTF-8")
     const $ = cheerio.load(fileContent);
     const $template = $('template');

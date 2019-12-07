@@ -1,26 +1,26 @@
 const { writeFiles } = require("./lib/writeFiles");
 const { globFiles } = require("./lib/globFiles");
 const foreachPromise = require('./lib/foreachPromise');
-const { Store } = require('./lib/Modulerizr');
+const { Modulerizr } = require('./lib/Modulerizr');
 
 async function modulerizr(_config) {
     const defaultConfig = require('../modulerizr.default.config.js');
     const config = Object.assign(defaultConfig, _config);
-    const fileStore = new Store();
+    const modulerizr = new Modulerizr(config);
 
-    await saveInStore('src', fileStore, config);
-    await saveInStore('components', fileStore, config);
-    await applyFilePlugins('beforePlugin', fileStore, null, config);
-    await applyFilePlugins('componentPlugin', fileStore, 'components', config);
-    await applyFilePlugins('srcPlugin', fileStore, 'src', config);
-    await applyFilePlugins('plugin', fileStore, null, config);
+    await saveInStore('src', modulerizr, config);
+    await saveInStore('components', modulerizr, config);
+    await applyFilePlugins('beforePlugin', modulerizr, null, config);
+    await applyFilePlugins('componentPlugin', modulerizr, 'components', config);
+    await applyFilePlugins('srcPlugin', modulerizr, 'src', config);
+    await applyFilePlugins('plugin', modulerizr, null, config);
 
-    await writeFiles(fileStore, config.dest);
+    await writeFiles(modulerizr, config.dest);
 
-    return await applyFilePlugins('afterPlugin', fileStore, null, config);
+    return await applyFilePlugins('afterPlugin', modulerizr, null, config);
 }
 
-async function applyFilePlugins(name, fileStore, type, config) {
+async function applyFilePlugins(name, modulerizr, type, config) {
     const systemPlugins = config[`_${name}s`] || [];
     const publicPlugins = config[`${name}s`] || [];
     const allPlugins = systemPlugins.concat(publicPlugins);
@@ -33,19 +33,19 @@ async function applyFilePlugins(name, fileStore, type, config) {
             console.log(`   execute ${name} "${plugin.name}". `);
 
         if (type == null) {
-            return Promise.resolve(plugin(fileStore, config))
+            return Promise.resolve(plugin(modulerizr))
         } else {
-            const files = fileStore.get(type);
+            const files = modulerizr.get(type);
             await foreachPromise(Object.values(files), async currentFile => {
-                const pluginResult = plugin(currentFile, fileStore, config);
+                const pluginResult = plugin(modulerizr, currentFile);
 
                 if (pluginResult == null)
                     return null;
                 else if (pluginResult.then !== null) {
                     const promisedPluginResult = await pluginResult;
-                    fileStore.set(type, currentFile.key, promisedPluginResult);
+                    modulerizr.set(type, currentFile.key, promisedPluginResult);
                 } else
-                    fileStore.set(type, currentFile.key, pluginResult);
+                    modulerizr.set(type, currentFile.key, pluginResult);
 
                 return pluginResult;
             });

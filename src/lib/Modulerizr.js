@@ -3,7 +3,7 @@ const files = {
     src: {}
 };
 
-function Store(config) {
+function Modulerizr(config) {
     return {
         setComponent(name, obj) {
             this.set('component', name, obj);
@@ -52,10 +52,12 @@ function Store(config) {
 
             console.log(text);
 
-        }
+        },
+        config
+
     }
 }
 
-exports.Store = Store;
+exports.Modulerizr = Modulerizr;
 exports.components = files.components;
 exports.src = files.src

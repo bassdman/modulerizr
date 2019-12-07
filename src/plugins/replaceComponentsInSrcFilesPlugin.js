@@ -1,20 +1,20 @@
 const cheerio = require('cheerio');
 
-function replaceComponentsInSrcFilesPlugin(currentFile, fileStore, config) {
+function replaceComponentsInSrcFilesPlugin(modulerizr, currentFile) {
 
     const originalContent = currentFile.content;
-    const replacedContent = resolveComponents(currentFile, fileStore, config.wrapperTag);
+    const replacedContent = resolveComponents(modulerizr, currentFile, modulerizr.config.wrapperTag);
     return {
-        content: replacedContent
+        content: replacedContent,
     }
 }
 
-function resolveComponents(srcFile, fileStore, wrapperTag = '<span>') {
+function resolveComponents(modulerizr, srcFile, wrapperTag = '<span>') {
     const $ = cheerio.load(srcFile.content);
 
-    const componentNames = Object.keys(fileStore.get('components'));
+    const componentNames = Object.keys(modulerizr.get('components'));
     for (let componentName of componentNames) {
-        const componentConfig = fileStore.get('components', componentName);
+        const componentConfig = modulerizr.get('components', componentName);
 
         let $allComponents = $(componentConfig.name);
         const componentExists = $allComponents.length > 0;
@@ -28,7 +28,7 @@ function resolveComponents(srcFile, fileStore, wrapperTag = '<span>') {
             const $currentComp = $(e);
 
             const componentAttributes = $currentComp.get(0).attribs || {};
-            console.log(componentAttributes)
+            modulerizr.log(componentAttributes)
             const wrapper = getWrapperTag(componentAttributes.wrapper || wrapperTag);
             if (wrapper != null) {
                 $currentComp.wrap(wrapper);
