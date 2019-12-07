@@ -7,8 +7,5 @@ module.exports = {
     "components": "**/*.component.html",
     "dest": "dest",
     "wrapperTag": "div",
-    _beforePlugins: [],
-    _componentPlugins: [extractComponentInfoPlugin],
-    _srcPlugins: [extractSrcInfoPlugin, replaceComponentsInSrcFilesPlugin],
-    _afterPlugins: [],
+    _plugins: [extractComponentInfoPlugin, extractSrcInfoPlugin, replaceComponentsInSrcFilesPlugin]
 }

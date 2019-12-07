@@ -8,34 +8,33 @@ async function modulerizr(_config) {
     const config = Object.assign(defaultConfig, _config);
     const modulerizr = new Modulerizr(config);
 
-    await saveInStore('src', modulerizr, config);
-    await saveInStore('components', modulerizr, config);
-    await applyFilePlugins('beforePlugin', modulerizr, null, config);
-    await applyFilePlugins('componentPlugin', modulerizr, 'components', config);
-    await applyFilePlugins('srcPlugin', modulerizr, 'src', config);
-    await applyFilePlugins('plugin', modulerizr, null, config);
+    await saveInStore(modulerizr, 'src');
+    await saveInStore(modulerizr, 'components');
 
+    await executeFilePlugins('initial', modulerizr);
+    await executeFilePlugins('component', modulerizr, 'components');
+    await executeFilePlugins('src', modulerizr, 'src');
+
+    await executeFilePlugins('beforeRender', modulerizr, null, 'default');
     await writeFiles(modulerizr, config.dest);
 
-    return await applyFilePlugins('afterPlugin', modulerizr, null, config);
+    return await executeFilePlugins('afterRender', modulerizr);
 }
 
-async function applyFilePlugins(name, modulerizr, type, config) {
-    const systemPlugins = config[`_${name}s`] || [];
-    const publicPlugins = config[`${name}s`] || [];
+async function executeFilePlugins(pluginType, modulerizr, dataType = null, _default = false) {
+    const systemPlugins = modulerizr.config._plugins.filter(plugin => plugin.pluginType == pluginType);
+    const publicPlugins = (modulerizr.config.plugins || []).filter(plugin => plugin.pluginType == pluginType || (_default && plugin.pluginType == null));
     const allPlugins = systemPlugins.concat(publicPlugins);
 
-    if (config.log)
-        console.log(`start ${name}s `);
+    modulerizr.log(`start ${pluginType}-plugins `)
 
     await foreachPromise(allPlugins, async plugin => {
-        if (config.log)
-            console.log(`   execute ${name} "${plugin.name}". `);
+        modulerizr.log(`   execute ${pluginType}-plugin "${plugin.name}". `);
 
-        if (type == null) {
+        if (pluginType != 'src' && pluginType != 'component') {
             return Promise.resolve(plugin(modulerizr))
         } else {
-            const files = modulerizr.get(type);
+            const files = modulerizr.get(dataType);
             await foreachPromise(Object.values(files), async currentFile => {
                 const pluginResult = plugin(modulerizr, currentFile);
 
@@ -43,9 +42,9 @@ async function applyFilePlugins(name, modulerizr, type, config) {
                     return null;
                 else if (pluginResult.then !== null) {
                     const promisedPluginResult = await pluginResult;
-                    modulerizr.set(type, currentFile.key, promisedPluginResult);
+                    modulerizr.set(dataType, currentFile.key, promisedPluginResult);
                 } else
-                    modulerizr.set(type, currentFile.key, pluginResult);
+                    modulerizr.set(dataType, currentFile.key, pluginResult);
 
                 return pluginResult;
             });
@@ -53,16 +52,16 @@ async function applyFilePlugins(name, modulerizr, type, config) {
         return;
     });
 
-    if (config.log)
-        console.log(`finished ${name}s \n----------`);
+    modulerizr.log(`finished ${pluginType}-plugins \n----------`);
 
     return;
 }
 
-async function saveInStore(type, fileStore, config) {
+async function saveInStore(modulerizr, type) {
+    const config = modulerizr.config;
     const fileNames = await globFiles(prepareConfigEntry(config[type]), config._rootPath);
     fileNames.forEach(file => {
-        fileStore.set(type, file, {
+        modulerizr.set(type, file, {
             key: file
         });
     })

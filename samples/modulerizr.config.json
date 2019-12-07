@@ -2,5 +2,5 @@
     "src": "src/*.html",
     "components": ["**/*.component.html"],
     "dest": "./dest/",
-    "log": true
+    "debug": true
 }

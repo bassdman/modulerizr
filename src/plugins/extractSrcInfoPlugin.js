@@ -12,5 +12,6 @@ async function extractSrcInfoPlugin(modulerizr, currentFile) {
 
     return retObj;
 }
+extractSrcInfoPlugin.pluginType = "src";
 
 exports.extractSrcInfoPlugin = extractSrcInfoPlugin;

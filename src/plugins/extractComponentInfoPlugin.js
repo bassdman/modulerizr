@@ -21,5 +21,6 @@ async function extractComponentInfoPlugin(modulerizr, currentFile) {
     })
     return retVal;
 }
+extractComponentInfoPlugin.pluginType = "component";
 
 exports.extractComponentInfoPlugin = extractComponentInfoPlugin;

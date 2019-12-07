@@ -28,7 +28,6 @@ function resolveComponents(modulerizr, srcFile, wrapperTag = '<span>') {
             const $currentComp = $(e);
 
             const componentAttributes = $currentComp.get(0).attribs || {};
-            modulerizr.log(componentAttributes)
             const wrapper = getWrapperTag(componentAttributes.wrapper || wrapperTag);
             if (wrapper != null) {
                 $currentComp.wrap(wrapper);
@@ -45,4 +44,7 @@ function getWrapperTag(componentWrapperTag, configWrapperTag) {
     const modifiedWrapperTag = `<${initialWrapperTag}>`.replace('<<', '<').replace('>>', '>');
     return modifiedWrapperTag;
 }
+
+replaceComponentsInSrcFilesPlugin.pluginType = 'src';
+
 exports.replaceComponentsInSrcFilesPlugin = replaceComponentsInSrcFilesPlugin;
