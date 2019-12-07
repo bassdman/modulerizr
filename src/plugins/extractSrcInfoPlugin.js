@@ -12,6 +12,9 @@ async function extractSrcInfoPlugin(modulerizr, currentFile) {
 
     return retObj;
 }
-extractSrcInfoPlugin.pluginType = "src";
+extractSrcInfoPlugin.metadata = {
+    pluginType: "src",
+    name: 'Internal-ExtractSrcInfoPlugin'
+}
 
 exports.extractSrcInfoPlugin = extractSrcInfoPlugin;

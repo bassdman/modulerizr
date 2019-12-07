@@ -45,6 +45,9 @@ function getWrapperTag(componentWrapperTag, configWrapperTag) {
     return modifiedWrapperTag;
 }
 
-replaceComponentsInSrcFilesPlugin.pluginType = 'src';
+replaceComponentsInSrcFilesPlugin.metadata = {
+    pluginType: "src",
+    name: 'Internal-ReplaceComponentsInSrcFilesPlugin'
+}
 
 exports.replaceComponentsInSrcFilesPlugin = replaceComponentsInSrcFilesPlugin;

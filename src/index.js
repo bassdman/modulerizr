@@ -8,8 +8,12 @@ async function modulerizr(_config) {
     const config = Object.assign(defaultConfig, _config);
     const modulerizr = new Modulerizr(config);
 
+    modulerizr.log(`The rootPath is: ${config._rootPath}`);
+
     await saveInStore(modulerizr, 'src');
     await saveInStore(modulerizr, 'components');
+
+    modulerizr.log(`\nApplyPlugins:`);
 
     await executeFilePlugins('initial', modulerizr);
     await executeFilePlugins('component', modulerizr, 'components');
@@ -22,14 +26,16 @@ async function modulerizr(_config) {
 }
 
 async function executeFilePlugins(pluginType, modulerizr, dataType = null, _default = false) {
-    const systemPlugins = modulerizr.config._plugins.filter(plugin => plugin.pluginType == pluginType);
-    const publicPlugins = (modulerizr.config.plugins || []).filter(plugin => plugin.pluginType == pluginType || (_default && plugin.pluginType == null));
+    const systemPlugins = getPlugins(modulerizr.config._plugins, pluginType, _default);
+    const publicPlugins = getPlugins(modulerizr.config.plugins, pluginType, _default);
     const allPlugins = systemPlugins.concat(publicPlugins);
 
-    modulerizr.log(`start ${pluginType}-plugins `)
+    if (allPlugins.length == 0)
+        modulerizr.log(`No ${pluginType}-plugins found.`)
 
     await foreachPromise(allPlugins, async plugin => {
-        modulerizr.log(`   execute ${pluginType}-plugin "${plugin.name}". `);
+        const pluginMetadata = plugin.metadata || {};
+        modulerizr.log(`   execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}". `);
 
         if (pluginType != 'src' && pluginType != 'component') {
             return Promise.resolve(plugin(modulerizr))
@@ -52,8 +58,6 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
         return;
     });
 
-    modulerizr.log(`finished ${pluginType}-plugins \n----------`);
-
     return;
 }
 
@@ -65,6 +69,7 @@ async function saveInStore(modulerizr, type) {
             key: file
         });
     })
+    modulerizr.log(`Found the following ${type}-files: ${fileNames}`);
 }
 
 function prepareConfigEntry(src) {
@@ -73,6 +78,13 @@ function prepareConfigEntry(src) {
     if (Array.isArray(src))
         return src;
     return [src];
+}
+
+function getPlugins(plugins = [], pluginType, _default) {
+    return plugins.filter(plugin => {
+        const currentPluginType = plugin.metadata ? plugin.metadata.pluginType : null;
+        return pluginType == currentPluginType || (_default && currentPluginType == null);
+    });
 }
 
 module.exports = modulerizr;

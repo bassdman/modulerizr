@@ -21,6 +21,9 @@ async function extractComponentInfoPlugin(modulerizr, currentFile) {
     })
     return retVal;
 }
-extractComponentInfoPlugin.pluginType = "component";
+extractComponentInfoPlugin.metadata = {
+    pluginType: "component",
+    name: 'Internal-ExtractComponentInfoPlugin'
+}
 
 exports.extractComponentInfoPlugin = extractComponentInfoPlugin;
