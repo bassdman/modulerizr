@@ -1,7 +1,7 @@
 const cheerio = require('cheerio');
 const foreachPromise = require('../lib/foreachPromise');
 
-function renderComponentsPlugin(modulerizr, currentFile) {
+function PreRenderPlugin(modulerizr, currentFile) {
 
     const srcFiles = Object.values(modulerizr.get('src'));
 
@@ -20,16 +20,30 @@ function renderComponentsPlugin(modulerizr, currentFile) {
             }
 
             const componentConfig = Object.values(modulerizr.get('components')).filter(comp => comp.name == componentElemConfig.tag.toLowerCase())[0]
-
-            $currentComp.replaceWith(componentConfig.content);
+            const replacedContent = replaceSlots(componentConfig.content, componentElemConfig);
+            $currentComp.replaceWith(replacedContent.trim());
         });
         modulerizr.set('src', currentFile.key, { content: $.html($(':root')) })
     });
 }
 
-renderComponentsPlugin.metadata = {
-    pluginType: "afterRender",
-    name: 'Internal-RenderComponentsPlugin'
+function replaceSlots(currentContent, componentElemConfig) {
+    const $ = cheerio.load(currentContent);
+
+    const $slots = $(':root').find('slot');
+    $slots.each((i, e) => {
+        const $currentSlot = $(e);
+        const name = $currentSlot.attr('name') || '_default';
+        const newContent = componentElemConfig.slots[name] || $currentSlot.html();
+
+        $currentSlot.replaceWith(newContent);
+    });
+    return $(':root').html();
 }
 
-exports.renderComponentsPlugin = renderComponentsPlugin;
+PreRenderPlugin.metadata = {
+    pluginType: "afterRender",
+    name: 'Internal-PreRenderPlugin'
+}
+
+exports.PreRenderPlugin = PreRenderPlugin;

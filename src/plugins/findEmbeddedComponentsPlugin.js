@@ -34,7 +34,8 @@ function findEmbeddedComponentsPlugin(modulerizr, currentFile) {
                 wrapperTag: getWrapperTag(attributes.wrapper || globalWrapperTag),
                 innerHtml: $currentComp.html(),
                 original,
-                attributes
+                attributes,
+                slots: getSlots($currentComp, $)
             }
         });
     }
@@ -43,6 +44,22 @@ function findEmbeddedComponentsPlugin(modulerizr, currentFile) {
         embeddedComponents,
         content: $.html(':root')
     }
+}
+
+function getSlots($comp, $) {
+    const $slots = $comp.find('[slot]');
+
+    const slots = {
+        _default: $comp.html()
+    }
+
+    $slots.each((i, e) => {
+        const $currentSlot = $(e);
+        const name = $currentSlot.attr('slot') || '_default';
+        slots[name] = $currentSlot.html();
+    });
+
+    return slots;
 }
 
 function getWrapperTag(componentWrapperTag, configWrapperTag) {

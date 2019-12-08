@@ -2,7 +2,7 @@ const cheerio = require('cheerio');
 const fs = require('fs-extra');
 
 
-async function extractComponentInfoPlugin(modulerizr, currentFile) {
+async function InitComponentsPlugin(modulerizr, currentFile) {
     const fileContent = await fs.readFile(currentFile.key, "UTF-8")
     const $ = cheerio.load(fileContent);
     const $template = $('template');
@@ -22,9 +22,9 @@ async function extractComponentInfoPlugin(modulerizr, currentFile) {
 
     return retVal;
 }
-extractComponentInfoPlugin.metadata = {
+InitComponentsPlugin.metadata = {
     pluginType: "component",
-    name: 'Internal-ExtractComponentInfoPlugin'
+    name: 'Internal-InitComponentsPlugin'
 }
 
-exports.extractComponentInfoPlugin = extractComponentInfoPlugin;
+exports.InitComponentsPlugin = InitComponentsPlugin;

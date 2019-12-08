@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 
-async function extractSrcInfoPlugin(modulerizr, currentFile) {
+async function InitSrcPlugin(modulerizr, currentFile) {
     const content = await fs.readFile(currentFile.key, "UTF-8")
 
     const retObj = Object.assign({
@@ -12,9 +12,9 @@ async function extractSrcInfoPlugin(modulerizr, currentFile) {
 
     return retObj;
 }
-extractSrcInfoPlugin.metadata = {
+InitSrcPlugin.metadata = {
     pluginType: "src",
-    name: 'Internal-ExtractSrcInfoPlugin'
+    name: 'Internal-InitSrcPlugin'
 }
 
-exports.extractSrcInfoPlugin = extractSrcInfoPlugin;
+exports.InitSrcPlugin = InitSrcPlugin;

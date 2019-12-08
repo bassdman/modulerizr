@@ -9,11 +9,18 @@
 </head>
 
 <body>
-    <!-- This will be rendered to <div>Hello World</div> -->
+    <!-- This will be rendered to <div>Hello</div> -->
     <hello-world></hello-world>
 
-    <!-- This will be rendered to <div>Hello World!!!</div> -->
-    <hello-world>!!!</hello-world>
+    <!-- This will be rendered to <div>Hello Gustav!!!</div> -->
+    <hello-world>Gustav!!!</hello-world>
+
+    <!-- This will be rendered to <div><span>1</span><span>Hello</span><span>2</span></div> -->
+    <hello-world-slot-named>
+        <span slot="before">1</span>
+        <span slot="after">2</span>
+        <span>This Text won't be visible because no default slot exists in the component.</span>
+    </hello-world-slot-named>
 </body>
 
 </html>

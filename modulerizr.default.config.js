@@ -1,7 +1,7 @@
-const { extractComponentInfoPlugin } = require("./src/plugins/extractComponentInfoPlugin");
-const { extractSrcInfoPlugin } = require('./src/plugins/extractSrcInfoPlugin');
+const { InitComponentsPlugin } = require("./src/plugins/InitComponentsPlugin");
+const { InitSrcPlugin } = require('./src/plugins/InitSrcPlugin');
 const { findEmbeddedComponentsPlugin } = require("./src/plugins/findEmbeddedComponentsPlugin")
-const { renderComponentsPlugin } = require("./src/plugins/renderComponentsPlugin")
+const { PreRenderPlugin } = require("./src/plugins/PreRenderPlugin")
 const { writeDestFilesPlugin } = require("./src/plugins/writeDestFilesPlugin");
 
 
@@ -12,10 +12,10 @@ module.exports = {
     "dest": "dest",
     "defaultComponentWrapper": "div",
     _plugins: [
-        extractComponentInfoPlugin,
-        extractSrcInfoPlugin,
+        InitComponentsPlugin,
+        InitSrcPlugin,
         findEmbeddedComponentsPlugin,
-        renderComponentsPlugin,
+        PreRenderPlugin,
         writeDestFilesPlugin
     ]
 }
