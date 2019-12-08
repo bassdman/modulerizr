@@ -38,9 +38,11 @@ function render(modulerizr, currentFile, content) {
 
         if (componentElemConfig.wrapperTag != null) {
             $currentComp.wrap(componentElemConfig.wrapperTag);
+            $currentComp.parent().attr("data-v-" + componentElemConfig.componentId, "")
         }
 
-        const componentConfig = Object.values(modulerizr.get('components')).filter(comp => comp.name == componentElemConfig.tag.toLowerCase())[0]
+
+        const componentConfig = Object.values(modulerizr.get('components')).filter(comp => comp.name == componentElemConfig.tag)[0]
         const replacedContent = replaceSlots(componentConfig.content, componentElemConfig);
         $currentComp.replaceWith(replacedContent.trim());
     });

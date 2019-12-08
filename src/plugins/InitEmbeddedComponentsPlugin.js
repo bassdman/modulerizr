@@ -1,4 +1,5 @@
 const cheerio = require('cheerio');
+const crypto = require('crypto');
 
 function InitEmbeddedComponentsPlugin(modulerizr, currentFile) {
     const $ = cheerio.load(currentFile.content);
@@ -16,10 +17,8 @@ function InitEmbeddedComponentsPlugin(modulerizr, currentFile) {
             continue;
 
         $allComponents.each((i, e) => {
-            const componentId = Math.random().toString(36).substr(2, 5) + Math.random().toString(36).substr(2, 5);
-
             const $currentComp = $(e);
-
+            const componentId = crypto.createHash('md5').update($.html($currentComp)).digest("hex").substring(0, 8);
             const original = $.html($currentComp);
             const attributes = Object.assign({}, $currentComp.get(0).attribs);
 
@@ -28,10 +27,12 @@ function InitEmbeddedComponentsPlugin(modulerizr, currentFile) {
 
             const embeddedComponentsConfig = {
                 id: componentId,
-                tag: $currentComp.prop('tagName'),
+                tag: $currentComp.prop('tagName').toLowerCase(),
                 content: $.html($currentComp),
                 wrapperTag: getWrapperTag(attributes.wrapper || globalWrapperTag),
                 innerHtml: $currentComp.html(),
+                componentId: componentConfig.id,
+                abc: 'def',
                 original,
                 attributes,
                 slots: getSlots($currentComp, $)
