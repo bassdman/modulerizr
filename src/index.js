@@ -10,7 +10,7 @@ async function modulerizr(_config) {
     await saveInStore(modulerizr, 'src');
     await saveInStore(modulerizr, 'components');
 
-    modulerizr.log(`The rootPath is: ${config._rootPath}`);
+    modulerizr.log(`\nThe rootPath is: ${config._rootPath}`);
 
     modulerizr.log(`\nApplyPlugins:`);
 
@@ -35,7 +35,7 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
 
     await foreachPromise(allPlugins, async plugin => {
         const pluginMetadata = plugin.metadata || {};
-        modulerizr.log(`   execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}". `);
+        modulerizr.log(`   execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}". `, 'green');
 
         if (pluginType != 'src' && pluginType != 'component') {
             return Promise.resolve(plugin(modulerizr))
@@ -63,19 +63,24 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
 
 async function saveInStore(modulerizr, type) {
     const config = modulerizr.config;
-    const fileNames = await globFiles(prepareConfigEntry(config[type]), config._rootPath);
+    const fileNames = await globFiles(prepareConfigEntry(config[type], type), config._rootPath);
     fileNames.forEach(file => {
         modulerizr.set(type, file, {
             key: file
         });
     })
-    modulerizr.log(`\nFound the following ${type}-files:`);
-    fileNames.forEach(file => console.log(`- ${file}`));
+    if (fileNames.length == 0) {
+        modulerizr.log(`Sorry, no ${type}-files found. Modify the entry "${type}" in your modulerizr config to match some files.`, 'red');
+    } else {
+        modulerizr.log(`\nFound the following ${type}-files:`, 'green');
+        fileNames.forEach(file => console.log(`   - ${file}`));
+    }
+
 }
 
-function prepareConfigEntry(src) {
+function prepareConfigEntry(src, type) {
     if (src == undefined)
-        throw new Error('modulerizr.config.src: src is undefined but required.');
+        throw new Error('Error in your modulerizr.config: ' + type + ' is undefined but required.', 'red');
     if (Array.isArray(src))
         return src;
     return [src];

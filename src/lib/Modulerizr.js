@@ -1,3 +1,5 @@
+const colors = require('colors/safe');
+
 const files = {
     components: {},
     src: {},
@@ -29,11 +31,16 @@ function Modulerizr(config) {
 
             return files[type][name];
         },
-        log(text) {
+        log(text, color) {
             if (!config.debug)
                 return;
 
-            console.log(text);
+            if (color) {
+                if (colors[color] == null)
+                    throw new Error(colors.red(`Error in function modulerizr.log(someText,color): Color "${color}" does not exist. Please look in package https://www.npmjs.com/package/colors which colors exist."`))
+                console.log(colors[color](text));
+            } else
+                console.log(text);
 
         },
         config
