@@ -1,10 +1,10 @@
 <template name="scoped-styles-2">
     <style scoped>
         .local{
-            color: yellow;
+            color: brown;
         }
     </style>
-    <div class="global">This is a green text, because styles in component .scoped-styles-1 had no scope-attribute. </div>
-    <div class="local">This is a red text. But the selector is scoped. </div>
-    <div class="local-1">This is a black text. Because the definition in the other component is scoped an does not affect this here.</div>
+    <div class="globalFromComponent1">This is a red text, because styles in component .scoped-styles-1 had no scope-attribute. </div>
+    <div class="local">This is a brown text. But the selector is scoped. </div>
+    <div class="local_1">This is a black text. Because the definition in the other component is scoped an does not affect this here.</div>
 </template>

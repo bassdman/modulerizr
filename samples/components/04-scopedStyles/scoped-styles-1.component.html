@@ -1,17 +1,17 @@
 <template name="scoped-styles-1">
     <style>
         /*These styles are global and can have siteeffects to all other components*/
-        .global {
-            color: green;
-        }
-    </style>
-    <style scoped>
-        .local,.local-1{
+        .globalFromComponent1 {
             color: red;
         }
     </style>
-    <div class="global">This is a green text. </div>
+    <style scoped>
+        .local,.local_1{
+            color: green;
+        }
+    </style>
+    <div class="globalFromComponent1">This is a red text. </div>
     <div class="local">This is a green text. But the selector is scoped. </div>
-    <div class="local-1">This is also a green text. And the selector is scoped.</div>
+    <div class="local_1">This is also a green text. And the selector is scoped.</div>
     <div class="styleFromSrc">This text is blue, because the styledefinition comes from the src-file</div>
 </template>
