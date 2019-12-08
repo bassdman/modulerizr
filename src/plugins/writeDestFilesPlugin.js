@@ -1,6 +1,7 @@
 const foreachPromise = require('../lib/foreachPromise');
 const path = require('path');
 const fs = require('fs-extra');
+const pretty = require('pretty');
 
 async function writeDestFilesPlugin(modulerizr) {
     const files = modulerizr.get('src');
@@ -9,7 +10,7 @@ async function writeDestFilesPlugin(modulerizr) {
     await foreachPromise(Object.keys(files), async file => {
         const fileconfig = modulerizr.get('src', file);
         const filePath = path.join(destpath, removeLeadSubfoldersFromPath(modulerizr.config.src, file));
-        const fileContent = fileconfig.content;
+        const fileContent = pretty(fileconfig.content);
 
         await fs.ensureDir(destpath);
         return await fs.writeFile(filePath, fileContent);

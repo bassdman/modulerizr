@@ -7,10 +7,10 @@ async function modulerizr(_config) {
     const config = Object.assign(defaultConfig, _config);
     const modulerizr = new Modulerizr(config);
 
-    modulerizr.log(`The rootPath is: ${config._rootPath}`);
-
     await saveInStore(modulerizr, 'src');
     await saveInStore(modulerizr, 'components');
+
+    modulerizr.log(`The rootPath is: ${config._rootPath}`);
 
     modulerizr.log(`\nApplyPlugins:`);
 
@@ -69,7 +69,8 @@ async function saveInStore(modulerizr, type) {
             key: file
         });
     })
-    modulerizr.log(`Found the following ${type}-files: ${fileNames}`);
+    modulerizr.log(`\nFound the following ${type}-files:`);
+    fileNames.forEach(file => console.log(`- ${file}`));
 }
 
 function prepareConfigEntry(src) {

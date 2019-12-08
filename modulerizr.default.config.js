@@ -7,10 +7,9 @@ const { writeDestFilesPlugin } = require("./src/plugins/writeDestFilesPlugin");
 
 
 module.exports = {
-    "src": "index.html",
-    "components": "**/*.component.html",
-    "dest": "dest",
-    "defaultComponentWrapper": "div",
+    dest: "dest",
+    defaultComponentWrapper: "div",
+    maxRecursionLevel: 100,
     _plugins: [
         InitComponentsPlugin,
         InitSrcPlugin,

@@ -4,8 +4,7 @@ function InitEmbeddedComponentsPlugin(modulerizr, currentFile) {
     const $ = cheerio.load(currentFile.content);
     const componentNames = Object.keys(modulerizr.get('components'));
     const globalWrapperTag = modulerizr.config.defaultComponentWrapper;
-    const embeddedComponents = {};
-
+    const embeddedComponents = [];
 
     for (let componentName of componentNames) {
         const componentConfig = modulerizr.get('components', componentName);
@@ -27,7 +26,7 @@ function InitEmbeddedComponentsPlugin(modulerizr, currentFile) {
             $currentComp.attr('data-component-id', componentId);
             $currentComp.attr('data-render-comp', true);
 
-            embeddedComponents[componentId] = {
+            const embeddedComponentsConfig = {
                 id: componentId,
                 tag: $currentComp.prop('tagName'),
                 content: $.html($currentComp),
@@ -37,6 +36,9 @@ function InitEmbeddedComponentsPlugin(modulerizr, currentFile) {
                 attributes,
                 slots: getSlots($currentComp, $)
             }
+            embeddedComponents.push(componentId);
+            modulerizr.set('embeddedComponents', componentId, embeddedComponentsConfig);
+
         });
     }
 
