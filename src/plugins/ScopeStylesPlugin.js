@@ -4,8 +4,7 @@ const csstree = require('css-tree');
 
 async function ScopeStylesPlugin(modulerizr, currentFile) {
     const $ = cheerio.load(currentFile.content);
-    $('*').attr('data-v-' + currentFile.id, "")
-    modulerizr.log('start ScopeStylesPlugin ' + currentFile.id);
+    $('*').not('style,script').attr('data-v-' + currentFile.id, "")
 
     const $styleTags = $('style[scoped]');
     $styleTags.each((i, e) => {

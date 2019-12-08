@@ -38,7 +38,9 @@ function render(modulerizr, currentFile, content) {
 
         if (componentElemConfig.wrapperTag != null) {
             $currentComp.wrap(componentElemConfig.wrapperTag);
-            $currentComp.parent().attr("data-v-" + componentElemConfig.componentId, "")
+            $currentComp.parent()
+                .attr("data-v-" + componentElemConfig.componentId, "")
+                .attr("data-component", componentElemConfig.tag)
         }
 
 
