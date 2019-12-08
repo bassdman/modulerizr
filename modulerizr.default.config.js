@@ -1,6 +1,6 @@
 const { InitComponentsPlugin } = require("./src/plugins/InitComponentsPlugin");
 const { InitSrcPlugin } = require('./src/plugins/InitSrcPlugin');
-const { findEmbeddedComponentsPlugin } = require("./src/plugins/findEmbeddedComponentsPlugin")
+const { InitEmbeddedComponentsPlugin } = require("./src/plugins/InitEmbeddedComponentsPlugin")
 const { PreRenderPlugin } = require("./src/plugins/PreRenderPlugin")
 const { writeDestFilesPlugin } = require("./src/plugins/writeDestFilesPlugin");
 
@@ -14,7 +14,7 @@ module.exports = {
     _plugins: [
         InitComponentsPlugin,
         InitSrcPlugin,
-        findEmbeddedComponentsPlugin,
+        InitEmbeddedComponentsPlugin,
         PreRenderPlugin,
         writeDestFilesPlugin
     ]

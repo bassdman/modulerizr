@@ -1,6 +1,6 @@
 const cheerio = require('cheerio');
 
-function findEmbeddedComponentsPlugin(modulerizr, currentFile) {
+function InitEmbeddedComponentsPlugin(modulerizr, currentFile) {
     const $ = cheerio.load(currentFile.content);
     const componentNames = Object.keys(modulerizr.get('components'));
     const globalWrapperTag = modulerizr.config.defaultComponentWrapper;
@@ -68,9 +68,9 @@ function getWrapperTag(componentWrapperTag, configWrapperTag) {
     return modifiedWrapperTag;
 }
 
-findEmbeddedComponentsPlugin.metadata = {
+InitEmbeddedComponentsPlugin.metadata = {
     pluginType: ['src', 'component'],
-    name: 'Internal-FindEmbeddedComponentsPlugin'
+    name: 'Internal-InitEmbeddedComponentsPlugin'
 }
 
-exports.findEmbeddedComponentsPlugin = findEmbeddedComponentsPlugin;
+exports.InitEmbeddedComponentsPlugin = InitEmbeddedComponentsPlugin;
