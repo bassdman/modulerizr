@@ -1,0 +1,47 @@
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Scope Styles</title>
+  </head>
+
+  <body>
+    <!-- 
+        In this example we have scoped styles.
+        With scoped styles they don't affect other components - neither child-components. 
+      -->
+    <script>
+      var globalVariable = 'This variable is global';
+    </script>
+    <div data-v-d262e5ab data-component="scoped-scripts">
+      <div data-v-d262e5ab>This is a random element just to show, that scripts can stay in a component with other html tags.</div>
+      <script>
+        (function(window) {
+          //a private variable - not accessible outside this scriptblock
+          var scope = 'component';
+
+          //assigned to the window-object. It can be used outside this scriptblock
+          window.nonScopedVariable = 'accessible globally';
+
+          //Acessible because it is inside this scriptblock
+          console.log(scope)
+        })(window);
+      </script>
+      <script>
+        //Returns null - Variable scope does not exist - it is scoped in the block above
+        console.log(window.scope)
+
+        //This is accessible because it is assigned to the window-object
+        console.log(nonScopedVariable);
+
+        //This is defined in the src-file and is global - so it is accessible here.
+        console.log(globalVariable);
+      </script>
+    </div>
+
+
+  </body>
+
+</html>

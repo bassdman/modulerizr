@@ -1,0 +1,23 @@
+<template name="scoped-scripts">
+    <div>This is a random element just to show, that scripts can stay in a component with other html tags.</div>
+   <script scoped>
+       //a private variable - not accessible outside this scriptblock
+       var scope = 'component';
+
+       //assigned to the window-object. It can be used outside this scriptblock
+       window.nonScopedVariable = 'accessible globally';
+       
+       //Acessible because it is inside this scriptblock
+       console.log(scope)
+   </script>
+   <script>
+       //Returns null - Variable scope does not exist - it is scoped in the block above
+       console.log(window.scope)
+
+       //This is accessible because it is assigned to the window-object
+       console.log(nonScopedVariable);
+
+       //This is defined in the src-file and is global - so it is accessible here.
+       console.log(globalVariable);
+   </script>
+</template>

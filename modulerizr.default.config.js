@@ -4,7 +4,7 @@ const { InitEmbeddedComponentsPlugin } = require("./src/plugins/InitEmbeddedComp
 const { PreRenderPlugin } = require("./src/plugins/PreRenderPlugin")
 const { writeDestFilesPlugin } = require("./src/plugins/writeDestFilesPlugin");
 const { ScopeStylesPlugin } = require("./src/plugins/ScopeStylesPlugin");
-
+const { ScopeScriptsPlugin } = require("./src/plugins/ScopeScriptsPlugin");
 
 
 module.exports = {
@@ -14,6 +14,7 @@ module.exports = {
     _plugins: [
         InitComponentsPlugin,
         ScopeStylesPlugin,
+        ScopeScriptsPlugin,
         InitSrcPlugin,
         InitEmbeddedComponentsPlugin,
         PreRenderPlugin,
