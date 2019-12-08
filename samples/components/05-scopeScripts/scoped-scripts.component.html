@@ -9,6 +9,9 @@
        
        //Acessible because it is inside this scriptblock
        console.log(scope)
+
+       //The componentInfo is available in every component
+       console.log($m)
    </script>
    <script>
        //Returns null - Variable scope does not exist - it is scoped in the block above
@@ -19,5 +22,8 @@
 
        //This is defined in the src-file and is global - so it is accessible here.
        console.log(globalVariable);
+
+       //ComponentInfo is just available in scoped scripts
+       console.log(window.$m)
    </script>
 </template>

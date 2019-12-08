@@ -15,10 +15,16 @@
     <script>
       var globalVariable = 'This variable is global';
     </script>
-    <div data-v-d262e5ab data-component="scoped-scripts">
-      <div data-v-d262e5ab>This is a random element just to show, that scripts can stay in a component with other html tags.</div>
+    <div data-v-472badcb id="472badcb" data-component="scoped-scripts">
+      <div data-v-472badcb>This is a random element just to show, that scripts can stay in a component with other html tags.</div>
       <script>
         (function(window) {
+          var $m = {
+            id: '472badcb',
+            name: 'scoped-scripts',
+            $el: document.getElementById('472badcb')
+          };
+
           //a private variable - not accessible outside this scriptblock
           var scope = 'component';
 
@@ -27,6 +33,10 @@
 
           //Acessible because it is inside this scriptblock
           console.log(scope)
+
+          //The componentInfo is available in every component
+          console.log($m)
+
         })(window);
       </script>
       <script>
@@ -38,6 +48,9 @@
 
         //This is defined in the src-file and is global - so it is accessible here.
         console.log(globalVariable);
+
+        //ComponentInfo is just available in scoped scripts
+        console.log(window.$m)
       </script>
     </div>
 

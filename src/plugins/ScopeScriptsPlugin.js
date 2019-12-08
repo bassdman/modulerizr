@@ -7,7 +7,14 @@ async function ScopeScriptsPlugin(modulerizr, currentFile) {
     $scriptTags.each((i, e) => {
         const $currentScripts = $(e);
 
-        const scopedScript = `(function(window){${$currentScripts.html()}})(window);`;
+        const scopedScript = `(function(window){
+            var $m = {
+                id: '${currentFile.id}',
+                name: '${currentFile.name}',
+                $el: document.getElementById('${currentFile.id}')
+            };
+            ${$currentScripts.html()}
+        })(window);`;
         $currentScripts.html(scopedScript);
         $currentScripts.removeAttr("scoped")
     });

@@ -40,6 +40,7 @@ function render(modulerizr, currentFile, content) {
             $currentComp.wrap(componentElemConfig.wrapperTag);
             $currentComp.parent()
                 .attr("data-v-" + componentElemConfig.componentId, "")
+                .attr("id", componentElemConfig.componentId)
                 .attr("data-component", componentElemConfig.tag)
         }
 
