@@ -18,8 +18,8 @@ async function InitComponentsPlugin(modulerizr, currentFile) {
     const attributes = $template.get(0).attribs;
 
     Object.keys(attributes).forEach(attributeName => {
-        if (attributeName.startsWith('param-')) {
-            retVal.params[attributeName.replace('param-', '')] = attributes[attributeName];
+        if (attributeName.startsWith(':')) {
+            retVal.params[attributeName.replace(':', '')] = attributes[attributeName];
             delete retVal[attributeName];
         }
     })

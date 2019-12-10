@@ -1,7 +1,7 @@
 {
     "name": "modulerizr",
-    "version": "1.1.0-beta",
-    "description": "Simply add modularisation to legacy projects in just a few steps",
+    "version": "1.2.0-beta",
+    "description": "Integrate a configurable, component based architecture to your legacy project in just a few steps",
     "main": "index.js",
     "scripts": {
         "modulerizr": "node bin/index.js",

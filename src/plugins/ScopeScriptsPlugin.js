@@ -11,7 +11,9 @@ async function ScopeScriptsPlugin(modulerizr, currentFile) {
             var $m = {
                 id: '${currentFile.id}',
                 name: '${currentFile.name}',
-                $el: document.getElementById('${currentFile.id}')
+                $el: document.getElementById('${currentFile.id}'),
+                params: {},
+                slots: {}
             };
             ${$currentScripts.html()}
         })(window);`;
