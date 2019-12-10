@@ -35,7 +35,8 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
 
     await foreachPromise(allPlugins, async plugin => {
         const pluginMetadata = plugin.metadata || {};
-        modulerizr.log(`   execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}". `, 'green');
+        const internalText = pluginMetadata.internal ? "(Internal)" : ""
+        modulerizr.log(`   execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}" ${internalText}.`, 'green');
 
         if (pluginType != 'src' && pluginType != 'component') {
             return Promise.resolve(plugin(modulerizr))

@@ -16,7 +16,8 @@ async function InitSrcPlugin(modulerizr, currentFile) {
 }
 InitSrcPlugin.metadata = {
     pluginType: "src",
-    name: 'Internal-InitSrcPlugin'
+    name: 'Modulerizr-InitSrcPlugin',
+    internal: true
 }
 
 exports.InitSrcPlugin = InitSrcPlugin;

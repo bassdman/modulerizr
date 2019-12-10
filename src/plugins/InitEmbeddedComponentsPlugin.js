@@ -73,7 +73,8 @@ function getWrapperTag(componentWrapperTag, configWrapperTag) {
 
 InitEmbeddedComponentsPlugin.metadata = {
     pluginType: ['src', 'component'],
-    name: 'Internal-InitEmbeddedComponentsPlugin'
+    name: 'Modulerizr-InitEmbeddedComponentsPlugin',
+    internal: true
 }
 
 exports.InitEmbeddedComponentsPlugin = InitEmbeddedComponentsPlugin;

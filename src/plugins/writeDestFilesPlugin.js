@@ -29,7 +29,8 @@ function removeLeadSubfoldersFromPath(configSrc, fileSrc) {
 
 writeDestFilesPlugin.metadata = {
     pluginType: "afterRender",
-    name: 'Internal-WriteDestFilesPlugin'
+    name: 'Modulerizr-WriteDestFilesPlugin',
+    internal: true
 }
 
 exports.writeDestFilesPlugin = writeDestFilesPlugin;

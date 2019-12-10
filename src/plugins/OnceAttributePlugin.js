@@ -1,7 +1,7 @@
 const cheerio = require('cheerio');
 const foreachPromise = require('../lib/foreachPromise');
 
-function PreRenderPlugin(modulerizr, currentFile) {
+function OnceAttributePlugin(modulerizr, currentFile) {
 
     const srcFiles = Object.values(modulerizr.get('src'));
 
@@ -68,10 +68,10 @@ function replaceSlots(currentContent, componentElemConfig) {
     return $(':root').html();
 }
 
-PreRenderPlugin.metadata = {
-    pluginType: "afterRender",
-    name: 'Modulerizr-PreRenderPlugin',
+OnceAttributePlugin.metadata = {
+    pluginType: "component",
+    name: 'Modulerizr-OnceAttributePlugin',
     internal: true
 }
 
-exports.PreRenderPlugin = PreRenderPlugin;
+exports.OnceAttributePlugin = OnceAttributePlugin;

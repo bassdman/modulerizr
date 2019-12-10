@@ -28,7 +28,8 @@ async function InitComponentsPlugin(modulerizr, currentFile) {
 }
 InitComponentsPlugin.metadata = {
     pluginType: "component",
-    name: 'Internal-InitComponentsPlugin'
+    name: 'Modulerizr-InitComponentsPlugin',
+    internal: true
 }
 
 exports.InitComponentsPlugin = InitComponentsPlugin;

@@ -27,7 +27,8 @@ async function ScopeScriptsPlugin(modulerizr, currentFile) {
 }
 ScopeScriptsPlugin.metadata = {
     pluginType: "component",
-    name: 'Internal-ScopeScriptsPlugin'
+    name: 'Modulerizr-ScopeScriptsPlugin',
+    internal: true
 }
 
 exports.ScopeScriptsPlugin = ScopeScriptsPlugin;
