@@ -14,11 +14,16 @@ function DebugPlugin(config) {
             if (!Array.isArray(ignorePlugins))
                 ignorePlugins = [ignorePlugins];
 
-            modulerizr.config.plugins = modulerizr.config.plugins.filter(plugin => {
+            modulerizr.config.plugins = modulerizr.config.plugins.map(plugin => {
                 if (!plugin.metadata)
-                    return true;
+                    return plugin;
 
-                return !ignorePlugins.includes(plugin.metadata.name)
+                if (ignorePlugins.includes(plugin.metadata.name)) {
+                    plugin.metadata.ignore = true;
+                    plugin.metadata.log = 'Plugin "#name" won\'t be executed - it is ignored by the DebugPlugin.';
+                    plugin.metadata.logColor = "red";
+                }
+                return plugin;
             })
         }
     }

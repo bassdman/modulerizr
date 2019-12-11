@@ -1,9 +1,6 @@
 <html lang="en">
 
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>OnceAttribute-2</title>
   </head>
 
@@ -11,13 +8,53 @@
     <!-- 
         In this example we will show how to render styles and scripts just once - even though they would be rendered multiple times via component
       -->
-    <once-attribute-example>
-      -------------------------------------------------------
-      <once-attribute-example>
+    <div data-v-2869106c id="2869106c" data-component="once-attribute-example">
+      <script src="path/to/js-file.js"></script>
+
+      <!--This will be rendered once-->
+      <script src="path/to/js-file-once.js"></script>
+
+      <script>
+        //This is alo rendered multiple times
+        var renderedMultipleTimes = 'component';
+      </script>
+
+      <script>
+        var renderedOnce = 'once';
+      </script>
+
+      <!--styles are rendered once automatically-->
+      <style>
+        .color[data-v-2869106c] {
+          color: green
+        }
+      </style>
+    </div>
+    -------------------------------------------------------
+    <div data-v-2869106c id="2869106c" data-component="once-attribute-example">
+      <script src="path/to/js-file.js"></script>
+
+      <!--This will be rendered once-->
+      <script src="path/to/js-file-once.js"></script>
+
+      <script>
+        //This is alo rendered multiple times
+        var renderedMultipleTimes = 'component';
+      </script>
+
+      <script>
+        var renderedOnce = 'once';
+      </script>
+
+      <!--styles are rendered once automatically-->
+      <style>
+        .color[data-v-2869106c] {
+          color: green
+        }
+      </style>
+    </div>
 
 
-      </once-attribute-example>
-    </once-attribute-example>
   </body>
 
 </html>

@@ -1,53 +1,54 @@
 <html lang="en">
 
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Scope Styles</title>
-  </head>
+<head>
 
-  <body>
+
+
+    <title>Scope Styles</title>
+</head>
+
+<body>
     <!-- 
         In this example we have scoped styles.
         With scoped styles they don't affect other components - neither child-components. 
       -->
     <style>
-      .styleFromSrc {
-        color: blue;
-      }
+        .styleFromSrc {
+            color: blue;
+        }
     </style>
     <div data-v-b1a5a1ce id="b1a5a1ce" data-component="scoped-styles-1">
-      <style>
-        /*These styles are global and can have siteeffects to all other components*/
-        .globalFromComponent1 {
-          color: red;
-        }
-      </style>
-      <style>
-        .local[data-v-b1a5a1ce],
-        .local_1[data-v-b1a5a1ce] {
-          color: green
-        }
-      </style>
-      <div class="globalFromComponent1" data-v-b1a5a1ce>This is a red text. </div>
-      <div class="local" data-v-b1a5a1ce>This is a green text. But the selector is scoped. </div>
-      <div class="local_1" data-v-b1a5a1ce>This is also a green text. And the selector is scoped.</div>
-      <div class="styleFromSrc" data-v-b1a5a1ce>This text is blue, because the styledefinition comes from the src-file</div>
+        <style>
+            /*These styles are global and can have siteeffects to all other components*/
+            
+            .globalFromComponent1 {
+                color: red;
+            }
+        </style>
+        <style>
+            .local[data-v-b1a5a1ce],
+            .local_1[data-v-b1a5a1ce] {
+                color: green
+            }
+        </style>
+        <div class="globalFromComponent1" data-v-b1a5a1ce>This is a red text. </div>
+        <div class="local" data-v-b1a5a1ce>This is a green text. But the selector is scoped. </div>
+        <div class="local_1" data-v-b1a5a1ce>This is also a green text. And the selector is scoped.</div>
+        <div class="styleFromSrc" data-v-b1a5a1ce>This text is blue, because the styledefinition comes from the src-file</div>
     </div>
     <div data-v-d3b01249 id="d3b01249" data-component="scoped-styles-2">
-      <style>
-        .local[data-v-d3b01249] {
-          color: brown
-        }
-      </style>
-      <div class="globalFromComponent1" data-v-d3b01249>This is a red text, because styles in component .scoped-styles-1 had no scope-attribute. </div>
-      <div class="local" data-v-d3b01249>This is a brown text. But the selector is scoped. </div>
-      <div class="local_1" data-v-d3b01249>This is a black text. Because the definition in the other component is scoped an does not affect this here.</div>
+        <style>
+            .local[data-v-d3b01249] {
+                color: brown
+            }
+        </style>
+        <div class="globalFromComponent1" data-v-d3b01249>This is a red text, because styles in component .scoped-styles-1 had no scope-attribute. </div>
+        <div class="local" data-v-d3b01249>This is a brown text. But the selector is scoped. </div>
+        <div class="local_1" data-v-d3b01249>This is a black text. Because the definition in the other component is scoped an does not affect this here.</div>
     </div>
 
 
 
-  </body>
+</body>
 
 </html>

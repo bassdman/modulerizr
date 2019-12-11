@@ -8,6 +8,5 @@ module.exports = {
     "components": ["**/06*/*.component.html"],
     "dest": "./dest/",
     "debug": true,
-    "createDebugFile": true,
     "plugins": [debugPlugin]
 }

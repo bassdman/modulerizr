@@ -35,8 +35,16 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
 
     await foreachPromise(plugins, async plugin => {
         const pluginMetadata = plugin.metadata || {};
-        const internalText = pluginMetadata.internal ? "(Internal)" : ""
-        modulerizr.log(`execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}" ${internalText}.`, 'green');
+        const internalText = pluginMetadata.internal ? "(Internal)" : "";
+
+        if (pluginMetadata.log) {
+            modulerizr.log(pluginMetadata.log.replace("#name", pluginMetadata.name), pluginMetadata.logColor);
+        }
+        if (pluginMetadata.ignore) {
+            return;
+        }
+        if (plugin.metadata)
+            modulerizr.log(`execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}" ${internalText}.`, 'green');
 
         if (pluginType != 'src' && pluginType != 'component') {
             return Promise.resolve(plugin(modulerizr))
