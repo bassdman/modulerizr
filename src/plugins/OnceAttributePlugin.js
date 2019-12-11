@@ -1,73 +1,28 @@
 const cheerio = require('cheerio');
-const foreachPromise = require('../lib/foreachPromise');
+const crypto = require('crypto');
 
-function OnceAttributePlugin(modulerizr, currentFile) {
+async function OnceAttributePlugin(modulerizr, currentFile) {
+    const $ = cheerio.load(currentFile.content);
 
-    const srcFiles = Object.values(modulerizr.get('src'));
+    const $onceAttributes = $('[once]');
+    $onceAttributes.each((i, e) => {
+        const $currentOnceAttribute = $(e);
+        const htmlToValidate = $.html($currentOnceAttribute).replace(/\s/g, "");
 
-    return foreachPromise(srcFiles, async currentFile => {
-        let allComponentsRendered = false;
-        let level = 1;
-        let content = currentFile.content;
+        const elementHash = crypto.createHash('md5').update(htmlToValidate).digest("hex").substring(0, 16);
 
-        while (!allComponentsRendered) {
-            content = render(modulerizr, currentFile, content);
-            const $ = cheerio.load(content);
-            if ($('[data-render-comp]').length == 0)
-                allComponentsRendered = true;
+        if (modulerizr.exists('onceAttibutePlugin', elementHash)) {
 
-            if (level >= modulerizr.config.maxRecursionLevel) {
-                throw new Error('There is a Problem with infinite recursion in nested Elements. Sth like Component "A" includes Component "B"  and Component "B" includes Component "A". This leads to an infinite loop. Please fix this.');
-            }
-            level++;
+            $currentOnceAttribute.replaceWith('<!-- This element had the attribute "once" and already exists before -->');
+            return;
         }
-
-
+        modulerizr.set('onceAttibutePlugin', elementHash, true);
     });
+
+    return {
+        content: $.html($(':root'))
+    }
 }
-
-function render(modulerizr, currentFile, content) {
-    const $ = cheerio.load(content);
-
-    const $componentsToRender = $('[data-render-comp]');
-
-    $componentsToRender.each((i, e) => {
-        const $currentComp = $(e);
-        const componentId = $currentComp.attr('data-component-id');
-        const componentElemConfig = modulerizr.get('embeddedComponents', componentId);
-
-        if (componentElemConfig.wrapperTag != null) {
-            $currentComp.wrap(componentElemConfig.wrapperTag);
-            $currentComp.parent()
-                .attr("data-v-" + componentElemConfig.componentId, "")
-                .attr("id", componentElemConfig.componentId)
-                .attr("data-component", componentElemConfig.tag)
-        }
-
-
-        const componentConfig = Object.values(modulerizr.get('components')).filter(comp => comp.name == componentElemConfig.tag)[0]
-        const replacedContent = replaceSlots(componentConfig.content, componentElemConfig);
-        $currentComp.replaceWith(replacedContent.trim());
-    });
-    modulerizr.set('src', currentFile.key, { content: $.html($(':root')) })
-
-    return $(':root').html();
-}
-
-function replaceSlots(currentContent, componentElemConfig) {
-    const $ = cheerio.load(currentContent);
-
-    const $slots = $(':root').find('slot');
-    $slots.each((i, e) => {
-        const $currentSlot = $(e);
-        const name = $currentSlot.attr('name') || '_default';
-        const newContent = componentElemConfig.slots[name] || $currentSlot.html();
-
-        $currentSlot.replaceWith(newContent);
-    });
-    return $(':root').html();
-}
-
 OnceAttributePlugin.metadata = {
     pluginType: "component",
     name: 'Modulerizr-OnceAttributePlugin',

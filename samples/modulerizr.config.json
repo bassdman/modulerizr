@@ -1,7 +1,0 @@
-{
-    "src": "src/*.html",
-    "components": ["**/*.component.html"],
-    "dest": "./dest/",
-    "debug": true,
-    "createDebugFile": true
-}

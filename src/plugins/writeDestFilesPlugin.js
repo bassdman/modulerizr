@@ -16,9 +16,6 @@ async function writeDestFilesPlugin(modulerizr) {
         return await fs.writeFile(filePath, fileContent);
     });
 
-    if (modulerizr.config.createDebugFile)
-        await fs.writeFile(path.join(destpath, 'modulerizr-debug.config.json'), JSON.stringify({ src: modulerizr.get('src'), components: modulerizr.get('components'), embeddedComponents: modulerizr.get('embeddedComponents'), config: modulerizr.config }, null, 1));
-
     return;
 }
 

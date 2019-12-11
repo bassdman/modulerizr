@@ -2,7 +2,7 @@ const cheerio = require('cheerio');
 const foreachPromise = require('../lib/foreachPromise');
 
 function PreRenderPlugin(modulerizr, currentFile) {
-
+    // console.log(currentFile)
     const srcFiles = Object.values(modulerizr.get('src'));
 
     return foreachPromise(srcFiles, async currentFile => {
@@ -30,7 +30,8 @@ function render(modulerizr, currentFile, content) {
     const $ = cheerio.load(content);
 
     const $componentsToRender = $('[data-render-comp]');
-
+    //  console.log(content)
+    //  console.log('xx')
     $componentsToRender.each((i, e) => {
         const $currentComp = $(e);
         const componentId = $currentComp.attr('data-component-id');

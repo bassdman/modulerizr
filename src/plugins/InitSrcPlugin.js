@@ -11,7 +11,6 @@ async function InitSrcPlugin(modulerizr, currentFile) {
         id: crypto.createHash('md5').update(content).digest("hex").substring(0, 8)
     }, currentFile);
 
-
     return retObj;
 }
 InitSrcPlugin.metadata = {

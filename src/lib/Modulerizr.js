@@ -31,6 +31,10 @@ function Modulerizr(config) {
             }
             return files[type][name];
         },
+        exists(type, name) {
+            const value = this.get(type, name);
+            return value != null;
+        },
         log(text, color) {
             if (!config.debug)
                 return;

@@ -5,6 +5,8 @@ const { Modulerizr } = require('./lib/Modulerizr');
 async function modulerizr(_config) {
     const defaultConfig = require('../modulerizr.default.config.js');
     const config = Object.assign(defaultConfig, _config);
+    config.plugins = (config._plugins).concat(config.plugins || []);
+
     const modulerizr = new Modulerizr(config);
 
     await saveInStore(modulerizr, 'src');
@@ -26,17 +28,15 @@ async function modulerizr(_config) {
 }
 
 async function executeFilePlugins(pluginType, modulerizr, dataType = null, _default = false) {
-    const systemPlugins = getPlugins(modulerizr.config._plugins, pluginType, _default);
-    const publicPlugins = getPlugins(modulerizr.config.plugins, pluginType, _default);
-    const allPlugins = systemPlugins.concat(publicPlugins);
+    const plugins = getPlugins(modulerizr.config.plugins, pluginType, _default);
 
-    if (allPlugins.length == 0 && pluginType != 'render')
+    if (plugins.length == 0 && pluginType != 'render')
         modulerizr.log(`No ${pluginType}-plugins found.`)
 
-    await foreachPromise(allPlugins, async plugin => {
+    await foreachPromise(plugins, async plugin => {
         const pluginMetadata = plugin.metadata || {};
         const internalText = pluginMetadata.internal ? "(Internal)" : ""
-        modulerizr.log(`   execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}" ${internalText}.`, 'green');
+        modulerizr.log(`execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}" ${internalText}.`, 'green');
 
         if (pluginType != 'src' && pluginType != 'component') {
             return Promise.resolve(plugin(modulerizr))
@@ -97,5 +97,7 @@ function getPlugins(plugins = [], pluginType, _default) {
             return pluginType == currentPluginType || (_default && currentPluginType == null);
     });
 }
+
+
 
 module.exports = modulerizr;

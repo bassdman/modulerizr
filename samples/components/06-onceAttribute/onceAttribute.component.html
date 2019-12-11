@@ -1,0 +1,21 @@
+<template name="once-attribute-example2">
+    <!--This will be rendered multiple times-->
+   <script src="path/to/js-file.js"></script>
+
+   <!--This will be rendered once-->
+   <script src="path/to/js-file-once.js"></script>
+   
+   <script>
+       //This is alo rendered multiple times
+       var renderedMultipleTimes = 'component';
+   </script>
+
+    <script>
+        var renderedOnce = 'once';
+    </script>
+    
+    <!--styles are rendered once automatically-->
+   <style scoped>
+       .color{color:green}
+    </style>
+</template>
