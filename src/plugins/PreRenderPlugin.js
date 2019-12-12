@@ -47,7 +47,7 @@ function render(modulerizr, currentFile, content) {
         const replacedContent = replaceSlots(componentConfig.content, componentElemConfig);
         $currentComp.replaceWith(replacedContent.trim());
     });
-    modulerizr.set('src', currentFile.key, { content: $.html($(':root')) })
+    modulerizr.set('src', currentFile.key, { content: $.html($(':root')) });
 
     return $(':root').html();
 }

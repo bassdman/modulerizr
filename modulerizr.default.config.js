@@ -15,10 +15,10 @@ module.exports = {
         InitComponentsPlugin,
         ScopeStylesPlugin,
         ScopeScriptsPlugin,
-        OnceAttributePlugin,
         InitSrcPlugin,
         InitEmbeddedComponentsPlugin,
         PreRenderPlugin,
+        OnceAttributePlugin,
         writeDestFilesPlugin
     ]
 }

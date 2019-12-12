@@ -3,14 +3,16 @@
    <script src="path/to/js-file.js"></script>
 
    <!--This will be rendered once-->
-   <script src="path/to/js-file-once.js"></script>
+   <script src="path/to/js-file-once.js" once></script>
+   
+   <link href="path/to/css.css">
    
    <script>
-       //This is alo rendered multiple times
+       //This is also rendered multiple times
        var renderedMultipleTimes = 'component';
    </script>
 
-    <script>
+    <script once>
         var renderedOnce = 'once';
     </script>
     
