@@ -4,8 +4,8 @@ const debugPlugin = DebugPlugin({
     ignorePlugins: []
 })
 module.exports = {
-    "src": "src/06*.html",
-    "components": ["**/06*/*.component.html"],
+    "src": ["sample**/0*.html"],
+    "components": ["**/*.component.html"],
     "dest": "./dest/",
     "debug": true,
     "plugins": [debugPlugin]

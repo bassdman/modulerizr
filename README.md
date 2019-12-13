@@ -105,6 +105,7 @@ The component "custom-component-1.component.hml":
     </script>
     <div class="color"><slot></slot></div>
 </template>
+```
 
 And the component "custom-component-2.component.hml":
 ``` html
@@ -122,15 +123,6 @@ And the component "custom-component-2.component.hml":
 
 This will be rendered to:
 ``` html
-<template name="custom-component2">
-    <style scoped>
-        .color{color:red}
-    </style>
-    <script scoped>
-        var x = "another scoped variable; was not defined before";
-    </script>
-    <div class="color"><slot></slot></div>
-</template>
 <html>
     <head>
         <title>Startpage</title>
@@ -138,7 +130,7 @@ This will be rendered to:
     </head>
     <body>
         {+include-head}
-            <div id="1e34329b" data-v-1e34329b>
+            <div id="1e34329b" data-v-1e34329b data-component="custom-component1">
                 <style>
                     .color[data-v-1e34329b]{color:red}
                 </style>
@@ -149,7 +141,7 @@ This will be rendered to:
                 </script>
                 <div class="color" data-v-1e34329b>Some Text from component1</div>
             </div>
-            <div id="93d13c56" data-v-93d13c56>
+            <div id="93d13c56" data-v-93d13c56  data-component="custom-component2">
                 <style>
                     .color[data-v-93d13c56]{color:red}
                 </style>
