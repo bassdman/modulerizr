@@ -1,11 +1,13 @@
 # Modulerizr
 
-> Integrate a configurable, component based architecture to your legacy project in just a few steps
+> Integrate a component based architecture to your legacy project in just a few steps
 
 [![npm version](https://img.shields.io/npm/v/modulerizr.svg)](https://www.npmjs.com/package/modulerizr)
 [![npm downloads](https://img.shields.io/npm/dt/modulerizr.svg)](https://www.npmjs.com/package/modulerizr)
 [![npm downloads](https://img.shields.io/github/license/mashape/apistatus.svg)](https://www.npmjs.com/package/modulerizr)
 ## Install
+
+Hint: This readme is not finished yet. Wait a few days for more information.
 
 ``` shell
     npm install modulerizr --save-dev
@@ -72,10 +74,16 @@ With it you have many small components that don't affect any other - except you 
 
 BUT: These Frameworks DON'T WORK GOOD WITHIN LEGACYPROJECTS. Have you ever seen Serverside-Syntax in Vue or Angular-Templates. No. That means you can not easily switch to modularisation when all your architecture is currently designed with php.
 
-But there is a solutionen - where you can have serverside syntax AND modularisation without big effort.
+Here's is a solutionen - where you can have serverside syntax AND modularisation without big effort.
 
 ## The solution
 Modulerizr.
+
+While angular, react,... give you many great features from the scratch without having to think about it, Modulerizr does it vice versa. It gives you a simple infrastructure for modularisation and you can add the features you want.
+
+Because of this, you can append it to almost every legacy project you can imagine. 
+
+## Example
 
 Imagine the following html-page "startpage.hml":
 ``` html
@@ -158,7 +166,49 @@ This will be rendered to:
 </html>
 ```
 
-And if you prefer some specials, you just need to add a plugin.
-And all you need is ca
+All you need is a modulerizr.config.js - file.
+``` javascript
+module.exports = {
+    "src": ["startpage.html"],
+    "components": ["*.component.html"],
+    "dest": "./dest/",
+}
+```
 
-This readme is not finished yet. Wait a few days for more information.
+And add a script to the package.json
+``` json
+    ...
+    "scripts": {
+        "modulerizr": "modulerizr run"
+    }
+    ...
+```
+
+and execute the following commands
+``` shell
+    # Variant 1: Install global; not recommended
+    npm install modulerizr --global
+    modulerizr run
+
+    # Variant 2: Recommended
+    npm install modulerizr --save-dev 
+    npm run modulerizr    
+```
+
+or via node:
+``` javascript
+    const modulerizr = require('modulerizr');
+    const config = {} // some config
+    modulerizr.run(config)  
+```
+
+Voilà, your're done. 
+Look into the samples for a better understanding.
+
+You need some more specials features? Then just add a plugin that does what you need.
+
+
+## Features
+
+### Modulerizr.config
+
