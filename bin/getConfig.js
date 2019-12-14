@@ -15,6 +15,17 @@ module.exports = function(argv) {
 
     }
 
+    for (let arg of process.argv) {
+        switch (arg) {
+            case '--debug':
+                config.debug = true;
+                break;
+            case '--production':
+                config.debug = false;
+                break;
+        }
+    }
+
     config._rootPath = rootpath;
     return config;
 }

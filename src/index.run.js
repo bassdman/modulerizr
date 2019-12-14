@@ -1,11 +1,17 @@
 const { globFiles } = require("./lib/globFiles");
 const foreachPromise = require('./lib/foreachPromise');
 const { Modulerizr } = require('./lib/Modulerizr');
+const color = require('colors');
 
-function run(_config) {
-    const configAsArray = Array.isArray(_config) ? _config : [_config];
+async function run(_config) {
+    let config = _config;
 
-    return foreachPromise(configAsArray, conf => runOne(conf))
+    if (!Array.isArray(config))
+        config = [config];
+
+    await foreachPromise(config, conf => runOne(conf));
+
+    console.log(color.green('Modulerizr finished.'));
 }
 
 async function runOne(_config) {
@@ -79,7 +85,7 @@ async function saveInStore(modulerizr, type) {
         modulerizr.log(`Sorry, no ${type}-files found. Modify the entry "${type}" in your modulerizr config to match some files.`, 'red');
     } else {
         modulerizr.log(`\nFound the following ${type}-files:`, 'green');
-        fileNames.forEach(file => console.log(`   - ${file}`));
+        fileNames.forEach(file => modulerizr.log(`   - ${file}`));
     }
 
 }
@@ -102,7 +108,5 @@ function getPlugins(plugins = [], pluginType, _default) {
             return pluginType == currentPluginType || (_default && currentPluginType == null);
     });
 }
-
-
 
 exports.run = run;

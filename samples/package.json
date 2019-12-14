@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "beforemodulerizr_1": "npm install",
-        "modulerizr_all": "modulerizr"
+        "modulerizr_all": "modulerizr run --debug"
     },
     "keywords": [
         "test",
