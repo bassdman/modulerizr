@@ -7,8 +7,6 @@
 [![npm downloads](https://img.shields.io/github/license/mashape/apistatus.svg)](https://www.npmjs.com/package/modulerizr)
 ## Install
 
-Hint: This readme is not finished yet. Wait a few days for more information.
-
 ``` shell
     npm install modulerizr --save-dev
 ```
@@ -16,7 +14,12 @@ Hint: This readme is not finished yet. Wait a few days for more information.
 <!-- - [Quicklink to the API](#api-description) -->
 
 ## The Problem
-When designing websites you will end up in many problems like very large files imports, overwriting css-rules, overwriting javascript-variables,...
+When designing larger websites you will end up in many problems you have to challenge, like 
+- very large files imports 
+- overwriting css-rules, 
+- overwriting/global scoped javascript-variables,
+- serverside syntax like php,jsp,... mixed with html-content
+- ...
 Let's consider the html below:
 ``` html
 <html>
@@ -65,7 +68,7 @@ Let's consider the html below:
 </html>
 ```
 
-Many of the problems existing in legacy projects can be solved with modularisation. 
+Many solutions exist to reduce these problems in web projects, one of the most important ones is modularisation. 
 With it you have many small components that don't affect any other - except you want it. There are many good frameworks that do a veeeery, very good job with it
  - Angular
  - Vue
@@ -83,9 +86,10 @@ While angular, react,... give you many great features from the scratch without h
 
 Because of this, you can append it to almost every legacy project you can imagine. 
 
-## Example
+## Usage
 
-Imagine the following html-page "startpage.hml":
+Imagine the following html-page "startpage.hml": 
+
 ``` html
 <html>
     <head>
@@ -101,6 +105,7 @@ Imagine the following html-page "startpage.hml":
     </body>
 </html>
 ```
+>The Brackets { } show serverside syntax. You could also add php-syntax,...
 
 The component "custom-component-1.component.hml":
 ``` html
@@ -129,7 +134,19 @@ And the component "custom-component-2.component.hml":
 </template>
 ```
 
-This will be rendered to:
+Then run modulerizr:
+``` javascript
+const { modulerizr } = require('modulerizr');
+
+modulerizr.run({
+    "src": ["startpage.html"],
+    "components": ["*.component.html"],
+    "dest": "./dest/",
+});
+```
+> More ways to run modulerizr you see in the next section ["How to run modulerizr"](#how-to-run-modulerizr)
+
+Voilà, your're done. This will be rendered to:
 ``` html
 <html>
     <head>
@@ -166,49 +183,153 @@ This will be rendered to:
 </html>
 ```
 
-All you need is a modulerizr.config.js - file.
+If you need some more specials features, just [add a plugin](#plugins) that does what you need.
+
+
+## How to run modulerizr
+There are multiple ways to run it. With Terminal or with node.
+
+### Run in Terminal
+Before running it, add a modulerizr.config.js in the root-folder.
 ``` javascript
 module.exports = {
-    "src": ["startpage.html"],
+    "src": ["**/*.src.html"],
     "components": ["*.component.html"],
     "dest": "./dest/",
 }
 ```
 
-And add a script to the package.json
+##### Variant 1 - globally installed:
+Install the package
+``` shell
+    npm install modulerizr --global
+```
+And run it
+``` shell
+    modulerizr run
+```
+##### Variant 2 - locally installed:
+Install the package
+``` shell
+    npm install modulerizr --save-dev
+```
+
+Add a script to the package.json
 ``` json
+{
     ...
     "scripts": {
         "modulerizr": "modulerizr run"
     }
     ...
+}
 ```
-
-and execute the following commands
+and run it 
 ``` shell
-    # Variant 1: Install global; not recommended
-    npm install modulerizr --global
-    modulerizr run
-
-    # Variant 2: Recommended
-    npm install modulerizr --save-dev 
     npm run modulerizr    
 ```
 
-or via node:
+##### Commandline-Parameters
+``` shell
+    #both overwrites debug-Attribute in config
+ 
+    #debug mode: shows logs; 
+    modulerizr --debug 
+
+    #production mode: hides logs; default;
+    modulerizr --production 
+```
+#### Node
+Here's how 
 ``` javascript
-    const modulerizr = require('modulerizr');
-    const config = {} // some config
+    const { modulerizr } = require('modulerizr');
+    const config = {...} // some config
     modulerizr.run(config)  
 ```
 
-Voilà, your're done. 
-Look into the samples for a better understanding.
+### Modulerizr.config
+You can run one config or an array of configs
+``` javascript
+    const { modulerizr } = require('modulerizr');
+    const config1 = {...} // some config
+    const config2 = {...} // some other config
 
-You need some more specials features? Then just add a plugin that does what you need.
+    //executes one config
+    modulerizr.run(config1);
+    
+    //executes multiple configs
+    modulerizr.run([config1,config2]);
+```
+Config attributes
+##### src
+All src-files that will be prerendered. They will be copied into the destination-folder. [Glob-Syntax](https://www.npmjs.com/package/glob).
+Type String or Array. Required.
+``` json
+{
+    ...
+    // it can be a string
+    "src": "**/*.allsrcfiles.html",
 
+    //or an array of strings
+    "src": ["srcfile1.html","srcfile2.html","srcfile3.html"]
+    ...
+}
+```
+
+##### components
+All component-files. [Glob-Syntax](https://www.npmjs.com/package/glob).
+Type: String or Array. Required.
+``` json
+{
+    ...
+    // it can be a string
+    "components": "**/*.component.html",
+
+    //or an array of strings
+    "components": ["comp1.component.html","comp2.component.html","comp3.component.html"]
+    ...
+}
+```
+
+##### dest
+The folder where the files will be rendered to. 
+Type: String. Required.
+``` json
+{
+    ...
+    "dest": "./dest",
+    ...
+}
+```
+
+##### debug
+Debugmode. Shows logs if debug == true. 
+Will be overwritten by the [--debug](#commandline-parameters) or [--production]((#commandline-parameters)) Parameter in command line.
+Type: Boolean. Default: false. 
+``` json
+{
+    ...
+    "debug": true,
+    ...
+}
+```
+
+##### plugins
+If you need a custom feature, you can add it via plugin.
+Type: Array. 
+``` javascript
+const { modulerizr, DebugPlugin } = require("modulerizr");
+
+modulerizr.run({
+    ...
+    //Add your plugins here
+    "plugins": [DebugPlugin()],
+    ...
+})
+```
 
 ## Features
 
-### Modulerizr.config
+### Plugins
 
+> Hint: This readme is not finished yet. Wait a few days for more information.
