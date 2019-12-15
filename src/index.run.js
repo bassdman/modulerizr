@@ -19,10 +19,13 @@ async function runOne(_config) {
     const config = Object.assign(defaultConfig, _config);
     config.plugins = (config._plugins).concat(config.plugins || []);
     const modulerizr = new Modulerizr(config);
+
     await saveInStore(modulerizr, 'src');
     await saveInStore(modulerizr, 'components');
+
     modulerizr.log(`\nThe rootPath is: ${config._rootPath}`);
     modulerizr.log(`\nApplyPlugins:`);
+
     await executeFilePlugins('initial', modulerizr);
     await executeFilePlugins('component', modulerizr, 'components');
     await executeFilePlugins('src', modulerizr, 'src');

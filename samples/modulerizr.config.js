@@ -1,4 +1,4 @@
-const { DebugPlugin } = require("modulerizr/src/plugins/DebugPlugin");
+const { DebugPlugin } = require("modulerizr");
 
 const debugPlugin = DebugPlugin({
     ignorePlugins: []
