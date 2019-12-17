@@ -215,7 +215,7 @@ Install the package
 ```
 
 Add a script to the package.json
-``` json
+``` javascript
 {
     ...
     "scripts": {
@@ -264,7 +264,7 @@ Config attributes
 ##### src
 All src-files that will be prerendered. They will be copied into the destination-folder. [Glob-Syntax](https://www.npmjs.com/package/glob).
 Type String or Array. Required.
-``` json
+``` javascript
 {
     ...
     // it can be a string
@@ -279,7 +279,7 @@ Type String or Array. Required.
 ##### components
 All component-files. [Glob-Syntax](https://www.npmjs.com/package/glob).
 Type: String or Array. Required.
-``` json
+``` javascript
 {
     ...
     // it can be a string
@@ -294,7 +294,7 @@ Type: String or Array. Required.
 ##### dest
 The folder where the files will be rendered to. 
 Type: String. Required.
-``` json
+``` javascript
 {
     ...
     "dest": "./dest",
@@ -306,7 +306,7 @@ Type: String. Required.
 Debugmode. Shows logs if debug == true. 
 Will be overwritten by the [--debug](#commandline-parameters) or [--production]((#commandline-parameters)) Parameter in command line.
 Type: Boolean. Default: false. 
-``` json
+``` javascript
 {
     ...
     "debug": true,
@@ -328,8 +328,134 @@ modulerizr.run({
 })
 ```
 
+##### defaultComponentWrapper
+By Default, components are wrapped by a div-tag. To change this, a component needs a "wrapper"-attribute or you can you can use a default-wrapper-tag for each component.
+This will be overwritten by the tag assigned in the component.
+
+``` javascript
+const { modulerizr, DebugPlugin } = require("modulerizr");
+
+modulerizr.run({
+    ...
+    //Now all you components will be wrapped by a span
+    "defaultComponentWrapper": "span",
+    ...
+})
+```
+
+
+##### maxRecursionLevel
+What happens if you add component A in component A and the content does not change? We have an infinte-loop.
+
+```html
+<component-a>
+    <component-a>
+        <component-a>
+            <component-a>
+                <component-a>
+                    <component-a>
+                        ...
+                    </component-a>
+                </component-a>
+            </component-a>
+        </component-a>
+    </component-a>
+</component-a>
+```
+
+We assume this is not expected - that's why there is a maximum recursion level. This example above has a recurison level of 6 (until the three dots "...") because there are 6 levels of components.
+By default ther is a maximumRecursionLevel of 100 - if you have more, there will be an error because we expect, that there is sth wrong.
+
+Maybe there is a usecase where you need more levels. You can increase this level in the config with the maxRecursionLevel-attribute.
+
+``` javascript
+const { modulerizr, DebugPlugin } = require("modulerizr");
+
+modulerizr.run({
+    ...
+    //Now you can have 500 component-levels. Yippeeee
+    "maxRecursionLevel": "500",
+    ...
+})
+```
+
 ## Features
+To understand the the next features, it is good to know the differences between components and src-files:
+- Src-Files: 
+   - Any html how you already use it
+   - They are the Root-Files that will be prerendered. 
+   - The transpilation of these files will be added in the dest-folder
+   - Many features like scoped variables,... don't work in src-files (if you don't change this via config)
+
+- Components
+   - Currently each component must have its own file - this will be changed in future
+   - It is wrapped by a template-tag with some attributes
+   - A component can include other components
+   - All features like scoping,... work in components
+   - A component by itself won't be rendered - it (or a parent component) must be included into a src-file
+
+### Basics
+
+Without one of the next features, a component is just outsourced html from the original file - like a php-include. So we make sure, that the rendering process does not affect legacy files.
+
+Example:
+src-file.html
+``` html
+<html>
+    <head>...</head>
+    <body>
+        some text
+        <component-1></component-1>
+        some text
+    </body>
+</html>
+```
+component1.component.html
+```html
+<template name="component-1">
+    This is component1
+</template>
+```
+dest-file:
+``` html
+<html>
+    <head>...</head>
+    <body>
+        some text
+        This is component1
+        some text
+    </body>
+</html>
+```
+
+To be honest: This feature by itself is not better then a php-include, it wouldn't make sense writing this package to add a feature that can be added without effort.
+
+Let's add some more "magic":
+
+### Components
+Sorry, before adding "magic", we need the basics of components.
+A component is always wrapped by a template-tag and has a uniqe name.
+``` html
+    <template name="xyz">
+        here comes the content
+    </template>
+```
+If the name is missing or a component with this name already exists, there will be an error.
+
+#### Slots
+The first "magic", well known from vue, web-components,...
+
+> this readme will be continued pretty soon
+
+
 
 ### Plugins
 
+
+### Features in future
+- inline-templates in src-files, marked with a "inline-template"-Attribute.
+- multiple components per file
+
+
 > Hint: This readme is not finished yet. Wait a few days for more information.
+
