@@ -260,7 +260,7 @@ You can run one config or an array of configs
     //executes multiple configs
     modulerizr.run([config1,config2]);
 ```
-Config attributes
+#### Config attributes
 ##### src
 All src-files that will be prerendered. They will be copied into the destination-folder. [Glob-Syntax](https://www.npmjs.com/package/glob).
 Type String or Array. Required.
@@ -388,8 +388,8 @@ To understand the the next features, it is good to know the differences between 
    - Many features like scoped variables,... don't work in src-files (if you don't change this via config)
 
 - Components
-   - Currently each component must have its own file - this will be changed in future
    - It is wrapped by a template-tag with some attributes
+   - Currently each component must have its own file - this will be changed in future
    - A component can include other components
    - All features like scoping,... work in components
    - A component by itself won't be rendered - it (or a parent component) must be included into a src-file
@@ -433,7 +433,7 @@ To be honest: This feature by itself is not better then a php-include, it wouldn
 Let's add some more "magic":
 
 ### Components
-Sorry, before adding "magic", we need the basics of components.
+Ok, before adding "magic", we need the basics of components.
 A component is always wrapped by a template-tag and has a uniqe name.
 ``` html
     <template name="xyz">
@@ -441,9 +441,155 @@ A component is always wrapped by a template-tag and has a uniqe name.
     </template>
 ```
 If the name is missing or a component with this name already exists, there will be an error.
+> Until now just one component per file is possible. Also inline components in a src-file are not possible. This will change in future.
 
 #### Slots
 The first "magic", well known from vue, web-components,...
+Sometimes you want to do sth with the innerHTML in the component declaration.
+
+##### Default Slot:
+Anywhere in the src-file:
+```html
+...
+<make-bold>
+    <div> 
+        This content will be bold, even though no class or style can be seen in the src-file;
+    </div>
+</make-bold>
+...
+```
+In the component file:
+```html
+    <template name="make-bold">
+        <div style="font-weight:bold;">
+            <slot></slot>
+        </div>
+    </template>
+```
+Will be rendered to:
+```html
+...
+<div style="font-weight:bold;">
+    <div> 
+        This content will be bold, even though no class or style can be seen in the src-file;
+    </div>
+</div>
+...
+```
+
+##### Named slots
+Sometimes you need more slots per component. In this case, you can add named slots.
+Anywhere in the src-file:
+```html
+...
+<before-and-after>
+    <div slot="before">
+        <div>This text is written before a static text.</div>
+    </div>
+    <div slot="after">
+        <div>This text is written after a static text.</div>
+    </div>
+</before-and-after>
+...
+```
+In the component file:
+```html
+    <template name="before-and-after">
+        <div><slot name="before"></slot></div>
+        <div>This Text is in the middle</div>
+        <div><slot name="after"></slot></div>
+    </template>
+```
+Will be rendered to:
+```html
+...
+<div>This text is written before a static text.</div>
+<div>This Text is in the middle</div>
+<div>This text is written after a static text.</div>
+...
+```
+
+#### Scoped Styles
+What happens if you have 2 components with the same style declaration, but different value? The style will be overwritten. :(
+
+##### Problem
+Component A
+```html
+<template name="red-text">
+    <style>
+        .textColor{color: red;}
+    </style>
+    <div class="textColor">This Text is red.</div>
+</template>
+```
+Component B
+```html
+<template name="green-text">
+    <style>
+        .textColor{color: green;}
+    </style>
+    <div class="textColor">This Text is green.</div>
+</template>
+```
+Src-file:
+```html
+...
+    <red-text></red-text>
+    <green-text></green-text>
+...
+```
+This will be rendered to
+```html
+...
+<style>
+    .textColor{color: red;}
+</style>
+<!-- Oh no, ****. This text is green, because the text color has been overwritten in another component.-->
+<div class="textColor">This Text is red.</div>
+
+<style>
+    .textColor{color: green;}
+</style>
+<div class="textColor">This Text is green.</div>
+...
+```
+
+##### Solution
+If you want scoped styles, just add a "scoped" attribute to the "style"-tag.
+Component A
+```html
+<template name="red-text">
+    <style scoped>
+        .textColor{color: red;}
+    </style>
+    <div class="textColor">This Text is red.</div>
+</template>
+```
+Component B
+```html
+<template name="green-text">
+    <style scoped>
+        .textColor{color: green;}
+    </style>
+    <div class="textColor">This Text is green.</div>
+</template>
+```
+
+This will be rendered to
+```html
+...
+<style>
+    .textColor [data-v-12345]{color: red;}
+</style>
+<!-- Yaaay, this is red now :) -->
+<div data-v-12345 class="textColor">This Text is red.</div>
+
+<style>
+    .textColor [data-v-67890]{color: green;}
+</style>
+<div class="textColor" data-v-67890>This Text is green.</div>
+...
+```
 
 > this readme will be continued pretty soon
 
@@ -455,7 +601,7 @@ The first "magic", well known from vue, web-components,...
 ### Features in future
 - inline-templates in src-files, marked with a "inline-template"-Attribute.
 - multiple components per file
-
-
+- support attribute component declarations
+- scoped link tags
 > Hint: This readme is not finished yet. Wait a few days for more information.
 
