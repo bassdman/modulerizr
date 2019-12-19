@@ -484,10 +484,10 @@ Anywhere in the src-file:
 ...
 <before-and-after>
     <div slot="before">
-        <div>This text is written before a static text.</div>
+        This text is written before a static text.
     </div>
     <div slot="after">
-        <div>This text is written after a static text.</div>
+        This text is written after a static text.
     </div>
 </before-and-after>
 ...
@@ -506,6 +506,34 @@ Will be rendered to:
 <div>This text is written before a static text.</div>
 <div>This Text is in the middle</div>
 <div>This text is written after a static text.</div>
+...
+```
+
+##### Wrapper
+Right now the default wrapper-element is a div. But for some components you may want another tag then div.
+Add the "wrapper"-attribute to a component assignment to change the wrapper attribute.
+```html
+...
+<make-bold wrapper="h1">This is a bold header</make-bold>
+...
+```
+will be rendered to
+```html
+...
+<h1 style="font-weight:bold;">
+    <div> 
+        This is a bold header
+    </div>
+</h1>
+
+<!--
+Instead of 
+<div style="font-weight:bold;">
+    <div> 
+        This is a bold header
+    </div>
+</div>
+-->
 ...
 ```
 
@@ -581,7 +609,7 @@ This will be rendered to
 <style>
     .textColor [data-v-12345]{color: red;}
 </style>
-<!-- Yaaay, this is red now :) -->
+<!-- Yaaay, this is red now - as expected:) -->
 <div data-v-12345 class="textColor">This Text is red.</div>
 
 <style>
@@ -589,6 +617,135 @@ This will be rendered to
 </style>
 <div class="textColor" data-v-67890>This Text is green.</div>
 ...
+```
+
+##### Efficency 
+What happens if you add the same component multiple times? 
+```html
+..
+<green-text></green-text>
+<green-text></green-text>
+<green-text></green-text>
+...
+```
+Will the same styles exist multiple times?
+```html
+...
+<!-- Will it be like this?-->
+<style>
+    .textColor [data-v-67890]{color: green;}
+</style>
+<div class="textColor" data-v-67890>This Text is green.</div>
+<style>
+    .textColor [data-v-67890]{color: green;}
+</style>
+<div class="textColor" data-v-67890>This Text is green.</div>
+<style>
+    .textColor [data-v-67890]{color: green;}
+</style>
+<div class="textColor" data-v-67890>This Text is green.</div>
+...
+```
+No. Same styleblocks with attribute "scoped" will just exist once. the example above would look like this:
+```html
+...
+<style>
+    .textColor [data-v-67890]{color: green;}
+</style>
+<div class="textColor" data-v-67890>This Text is green.</div>
+
+<div class="textColor" data-v-67890>This Text is green.</div>
+
+<div class="textColor" data-v-67890>This Text is green.</div>
+...
+```
+
+#### Scoped Scripts
+
+If you add a raw script-tag in a component, it can have  side effects to other components. Variables are global scoped and so they can overwrite other variables.
+
+##### Example
+Parent-Component 
+```html
+<template name="parent-component">
+    <script>
+        var text = "Hello Parent";
+    </script>
+    <child-component></child-component>
+    <script>
+        console.log(text);
+    </script>
+</template>
+```
+
+Child-Component 
+```html
+<template name="child-component">
+    <script>
+        var text = "Hello child";
+        console.log(text);
+    </script>
+</template>
+```
+
+This would be rendered like this:
+```html
+<script>
+    // Declaration in the parent component
+    var text = "Hello Parent";
+</script>
+ <script>
+     // Declaration in the child component
+    var text = "Hello child";
+    console.log(text);
+</script>
+<script>
+    // Oh no, the text in the parent component has been overwritten. That's not expected;
+    console.log(text);
+</script>
+```
+There are two Problems:
+- the global Scope is polluted
+- variables can be overwritten what is not expected
+
+##### Solution
+Scoped Scripts: Just add a "scoped"-Attribute to the script and this can not happen anymore.
+
+I this case, the parent component stays the same. In the child component we add a "scoped"-Attriubte
+
+Child-Component 
+```html
+<template name="child-component">
+    <script scoped>
+        var text = "Hello child";
+    </script>
+</template>
+```
+
+Would be rendered to
+```html
+<script>
+    // Declaration in the parent component
+    var text = "Hello Parent";
+</script>
+<div id="12345" data-component="12345" data-v-12345>
+    <script>
+        (function(window){
+            var $m = {
+                id: '12345',
+                name: 'child-component',
+                $el: document.getElementById('12345')
+            };
+
+            var text = "Hello child";
+            console.log(text);
+        })(window);
+    </script>
+</div>
+<script>
+    // As expected, "Hello parent" will be logged here
+    console.log(text);
+</script>
 ```
 
 > this readme will be continued pretty soon
