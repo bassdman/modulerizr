@@ -110,10 +110,10 @@ Imagine the following html-page "startpage.hml":
 The component "custom-component-1.component.hml":
 ``` html
 <template name="custom-component1">
-    <style scoped>
+    <style m-scoped>
         .color{color:green}
     </style>
-    <script scoped>
+    <script m-scoped>
         var x = "a scoped variable";
     </script>
     <div class="color"><slot></slot></div>
@@ -123,10 +123,10 @@ The component "custom-component-1.component.hml":
 And the component "custom-component-2.component.hml":
 ``` html
 <template name="custom-component2">
-    <style scoped>
+    <style m-scoped>
         .color{color:red}
     </style>
-    <script scoped>
+    <script m-scoped>
         var x = "another scoped variable; was not defined before";
     </script>
     <div class="color"><slot></slot></div>
@@ -587,7 +587,7 @@ If you want scoped styles, just add a "scoped" attribute to the "style"-tag.
 Component A
 ```html
 <template name="red-text">
-    <style scoped>
+    <style m-scoped>
         .textColor{color: red;}
     </style>
     <div class="textColor">This Text is red.</div>
@@ -596,7 +596,7 @@ Component A
 Component B
 ```html
 <template name="green-text">
-    <style scoped>
+    <style m-scoped>
         .textColor{color: green;}
     </style>
     <div class="textColor">This Text is green.</div>
@@ -716,7 +716,7 @@ I this case, the parent component stays the same. In the child component we add 
 Child-Component 
 ```html
 <template name="child-component">
-    <script scoped>
+    <script m-scoped>
         var text = "Hello child";
     </script>
 </template>
