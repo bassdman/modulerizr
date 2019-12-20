@@ -2,50 +2,50 @@ const cheerio = require('cheerio');
 const crypto = require('crypto');
 const foreachPromise = require('../lib/foreachPromise');
 
-async function OnceAttributePlugin(modulerizr) {
-    const srcFiles = Object.values(modulerizr.get('src'));
+function plugin(pluginconfig) {
+    const onceAttributeName = pluginconfig.scopedAttributeName || 'm-once';
 
-    return foreachPromise(srcFiles, async currentFile => {
-        const onceAttributes = {};
+    async function OnceAttributePlugin(modulerizr) {
+        const srcFiles = Object.values(modulerizr.get('src'));
 
-        const $ = cheerio.load(currentFile.content);
+        return foreachPromise(srcFiles, async currentFile => {
+            const onceAttributes = {};
 
-        logIfExternalScriptWithoutOnceFound(modulerizr, $);
+            const $ = cheerio.load(currentFile.content);
 
-        //identical style Tags are automatically rendered once
-        $('style').attr('once', "");
+            logIfExternalScriptWithoutOnceFound(modulerizr, $, onceAttributeName);
 
-        const $onceAttributes = $('[once]');
-        $onceAttributes.each((i, e) => {
-            const $currentOnceAttribute = $(e);
-            const htmlToValidate = $.html($currentOnceAttribute).replace(/\s/g, "");
+            //identical style Tags are automatically rendered once
+            $('style').attr(onceAttributeName, "");
 
-            const elementHash = crypto.createHash('md5').update(htmlToValidate).digest("hex").substring(0, 16);
-            if (onceAttributes[elementHash] != null) {
-                $currentOnceAttribute.replaceWith('<!-- Here was a component with attribute "once", which also exists above. -->');
-                return;
-            }
-            onceAttributes[elementHash] = true;
+            const $onceAttributes = $(`[${onceAttributeName}]`);
+            $onceAttributes.each((i, e) => {
+                const $currentOnceAttribute = $(e);
+                const htmlToValidate = $.html($currentOnceAttribute).replace(/\s/g, "");
+
+                const elementHash = crypto.createHash('md5').update(htmlToValidate).digest("hex").substring(0, 16);
+                if (onceAttributes[elementHash] != null) {
+                    $currentOnceAttribute.replaceWith('<!-- Here was a component with attribute "m-once", which also exists above. -->');
+                    return;
+                }
+                onceAttributes[elementHash] = true;
+            });
+
+            modulerizr.set('src', currentFile.key, { content: $.html($(':root')) });
         });
-
-        modulerizr.set('src', currentFile.key, { content: $.html($(':root')) });
-    });
-
-
-
-    return {
-        content: $.html($(':root'))
     }
-}
-OnceAttributePlugin.metadata = {
-    pluginType: "afterRender",
-    name: 'Modulerizr-OnceAttributePlugin',
-    internal: true
+    OnceAttributePlugin.metadata = {
+        pluginType: "afterRender",
+        name: 'Modulerizr-OnceAttributePlugin',
+        internal: true
+    }
+
+    return OnceAttributePlugin;
 }
 
-function logIfExternalScriptWithoutOnceFound(modulerizr, $) {
-    const $externalScriptsWithoutOnceAttr = $('[data-component] script[src]').not('[once]');
-    const $externalStylesWithoutOnceAttr = $('[data-component] link[href]').not('[once]');
+function logIfExternalScriptWithoutOnceFound(modulerizr, $, onceAttributeName) {
+    const $externalScriptsWithoutOnceAttr = $('[data-component] script[src]').not(`[${onceAttributeName}]`);
+    const $externalStylesWithoutOnceAttr = $('[data-component] link[href]').not(`[${onceAttributeName}]`);
     const alreadyLoggedCache = {};
     $externalScriptsWithoutOnceAttr.each((i, elem) => {
         const srcEntry = $(elem).attr('src');
@@ -67,4 +67,4 @@ function logIfExternalScriptWithoutOnceFound(modulerizr, $) {
     });
 }
 
-exports.OnceAttributePlugin = OnceAttributePlugin;
+exports.OnceAttributePlugin = plugin;

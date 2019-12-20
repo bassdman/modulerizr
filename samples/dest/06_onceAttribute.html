@@ -8,48 +8,54 @@
     <!-- 
         In this example we will show how to render styles and scripts just once - even though they would be rendered multiple times via component
       -->
-    <div data-v-07d70901 id="07d70901" data-component="once-attribute-example">
+    <div data-v-594a0367 id="594a0367" data-component="once-attribute-example">
       <script src="path/to/js-file.js"></script>
 
       <!--This will be rendered once-->
-      <script src="path/to/js-file-once.js" once></script>
+      <script src="path/to/js-file-once.js" m-once></script>
 
-      <link href="path/to/css.css" data-v-07d70901>
+      <link href="path/to/css.css" data-v-594a0367>
 
       <script>
         //This is also rendered multiple times
         var renderedMultipleTimes = 'component';
       </script>
 
-      <script once>
+      <script m-once>
         var renderedOnce = 'once';
       </script>
 
       <!--styles are rendered once automatically-->
-      <style once>
-        .color[data-v-07d70901] {
+      <style>
+        .color[data-v-594a0367] {
           color: green
         }
       </style>
     </div>
     -------------------------------------------------------
-    <div data-v-07d70901 id="07d70901" data-component="once-attribute-example">
+    <div data-v-594a0367 id="594a0367" data-component="once-attribute-example">
       <script src="path/to/js-file.js"></script>
 
       <!--This will be rendered once-->
-      <!-- Here was a component with attribute "once", which also exists above. -->
+      <script src="path/to/js-file-once.js" m-once></script>
 
-      <link href="path/to/css.css" data-v-07d70901>
+      <link href="path/to/css.css" data-v-594a0367>
 
       <script>
         //This is also rendered multiple times
         var renderedMultipleTimes = 'component';
       </script>
 
-      <!-- Here was a component with attribute "once", which also exists above. -->
+      <script m-once>
+        var renderedOnce = 'once';
+      </script>
 
       <!--styles are rendered once automatically-->
-      <!-- Here was a component with attribute "once", which also exists above. -->
+      <style>
+        .color[data-v-594a0367] {
+          color: green
+        }
+      </style>
     </div>
 
 

@@ -798,7 +798,7 @@ This would be rendered to
 By default external stylesheets are just loaded once per src-file (when assigend in a component). In case of scripts you have to assign them with a "once"-Attribute to assure that they are just loaded once.
 
 ```html
-<script once src="https://a-external-provider.com/jquery-ui.min.js"></script>
+<script m-once src="https://a-external-provider.com/jquery-ui.min.js"></script>
 <div>
     Here we add the component elements. 
     ...
@@ -807,7 +807,7 @@ By default external stylesheets are just loaded once per src-file (when assigend
 
 Declared multiple times in a src-file it would be rendered like this:
 ```html
-<script once src="https://a-external-provider.com/jquery-ui.min.js"></script>
+<script m-once src="https://a-external-provider.com/jquery-ui.min.js"></script>
 <div>
     Here we add the component elements. 
     ...
