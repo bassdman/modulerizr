@@ -509,7 +509,7 @@ Will be rendered to:
 ...
 ```
 
-##### Wrapper
+#### Wrapper
 Right now the default wrapper-element is a div. But for some components you may want another tag then div.
 Add the "wrapper"-attribute to a component assignment to change the wrapper attribute.
 ```html
@@ -731,6 +731,8 @@ Would be rendered to
 <div id="12345" data-component="12345" data-v-12345>
     <script>
         (function(window){
+            // This is added when you use a "scoped"-Attribute. 
+            //It gives you important component information in javascript.
             var $m = {
                 id: '12345',
                 name: 'child-component',
@@ -748,10 +750,74 @@ Would be rendered to
 </script>
 ```
 
-> this readme will be continued pretty soon
+#### One Time Rendering
+We work on a legacyproject and the codbease has no / not many components - and many scripts are assigned via script-tag. 
 
+Some scripts are only necessary for a specific features - for example jquery UI for a slider.
 
+We can use modulerizr to only add external scripts into the src-files, when they're used in a component.
+Let's imagine a slider component that needs the external jquery-ui-lib.
+```html
+<template name="custom-slider">
+    <script src="https://a-external-provider.com/jquery-ui.min.js"></script>
+    <link href="https://a-external-provider.com/jquery-ui.min.css">
+    <div>
+        Here we add the component elements. 
+        ...
+    </div>
+</template>
+```
+Adding external scripts and styles in templates work as expected - but you have to take care of one scenario:
+Using a component multiple times per page.
+Imagine this:
+```html
+<custom-slider></custom-slider>
+...
+<custom-slider></custom-slider>
+```
+This would be rendered to
+```html
+<script src="https://a-external-provider.com/jquery-ui.min.js"></script>
+<link href="https://a-external-provider.com/jquery-ui.min.css">
+<div>
+    Here we add the component elements. 
+    ...
+</div>
+...
+<!-- Oh no, the script is loaded twice -->
+<script src="https://a-external-provider.com/jquery-ui.min.js"></script>
+<!-- 
+    External Stylesheets are just loaded once per src-file.
+    <link href="https://a-external-provider.com/jquery-ui.min.css"> 
+-->
+<div>
+    Here we add the component elements. 
+    ...
+</div>
+```
+By default external stylesheets are just loaded once per src-file (when assigend in a component). In case of scripts you have to assign them with a "once"-Attribute to assure that they are just loaded once.
 
+```html
+<script once src="https://a-external-provider.com/jquery-ui.min.js"></script>
+<div>
+    Here we add the component elements. 
+    ...
+</div>
+```
+
+Declared multiple times in a src-file it would be rendered like this:
+```html
+<script once src="https://a-external-provider.com/jquery-ui.min.js"></script>
+<div>
+    Here we add the component elements. 
+    ...
+</div>
+...
+<div>
+    Here we add the component elements. 
+    ...
+</div>
+```
 ### Plugins
 
 
@@ -760,5 +826,7 @@ Would be rendered to
 - multiple components per file
 - support attribute component declarations
 - scoped link tags
+- 
+
 > Hint: This readme is not finished yet. Wait a few days for more information.
 
