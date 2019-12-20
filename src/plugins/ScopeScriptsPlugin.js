@@ -1,34 +1,43 @@
 const cheerio = require('cheerio');
 
-async function ScopeScriptsPlugin(modulerizr, currentFile) {
-    const $ = cheerio.load(currentFile.content);
+function plugin(pluginconfig = {}) {
+    const scopedAttributeName = pluginconfig.scopedAttributeName || 'm-scoped';
 
-    const $scriptTags = $('script[scoped]');
-    $scriptTags.each((i, e) => {
-        const $currentScripts = $(e);
+    async function ScopeScriptsPlugin(modulerizr, currentFile) {
+        const $ = cheerio.load(currentFile.content);
 
-        const scopedScript = `(function(window){
-            var $m = {
-                id: '${currentFile.id}',
-                name: '${currentFile.name}',
-                $el: document.getElementById('${currentFile.id}'),
-                params: {},
-                slots: {}
-            };
-            ${$currentScripts.html()}
-        })(window);`;
-        $currentScripts.html(scopedScript);
-        $currentScripts.removeAttr("scoped")
-    });
+        const $scriptTags = $(`script[${scopedAttributeName}]`);
+        $scriptTags.each((i, e) => {
+            const $currentScripts = $(e);
 
-    return {
-        content: $.html($(':root'))
+            const scopedScript = `(function(window){
+                var $m = {
+                    id: '${currentFile.id}',
+                    name: '${currentFile.name}',
+                    $el: document.getElementById('${currentFile.id}'),
+                    params: {},
+                    slots: {}
+                };
+                ${$currentScripts.html()}
+            })(window);`;
+            $currentScripts.html(scopedScript);
+            $currentScripts.removeAttr(scopedAttributeName)
+        });
+
+        return {
+            content: $.html($(':root'))
+        }
     }
-}
-ScopeScriptsPlugin.metadata = {
-    pluginType: "component",
-    name: 'Modulerizr-ScopeScriptsPlugin',
-    internal: true
+
+    ScopeScriptsPlugin.metadata = {
+        pluginType: "component",
+        name: 'Modulerizr-ScopeScriptsPlugin',
+        internal: true
+    }
+
+    return ScopeScriptsPlugin;
 }
 
-exports.ScopeScriptsPlugin = ScopeScriptsPlugin;
+
+
+exports.ScopeScriptsPlugin = plugin;

@@ -13,8 +13,8 @@ module.exports = {
     maxRecursionLevel: 100,
     _plugins: [
         InitComponentsPlugin,
-        ScopeStylesPlugin,
-        ScopeScriptsPlugin,
+        ScopeStylesPlugin(),
+        ScopeScriptsPlugin(),
         InitSrcPlugin,
         InitEmbeddedComponentsPlugin,
         PreRenderPlugin,
