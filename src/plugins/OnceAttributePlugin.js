@@ -2,19 +2,19 @@ const cheerio = require('cheerio');
 const crypto = require('crypto');
 
 function plugin(pluginconfig = {}) {
-    const scopedAttributeName = pluginconfig.scopedAttributeName || 'm-once';
+    const onceAttributeName = pluginconfig.onceAttributeName || 'm-once';
 
     async function OnceAttributePlugin(modulerizr) {
         return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
             const onceAttributes = {};
             const $ = cheerio.load(currentFile.content);
 
-            logIfExternalScriptWithoutOnceFound(modulerizr, $, scopedAttributeName);
+            logIfExternalScriptWithoutOnceFound(modulerizr, $, onceAttributeName);
 
             //identical style Tags are automatically rendered once
-            $('style').attr(scopedAttributeName, "");
+            $('style').attr(onceAttributeName, "");
 
-            const $onceAttributes = $(`[${scopedAttributeName}]`);
+            const $onceAttributes = $(`[${onceAttributeName}]`);
             $onceAttributes.each((i, e) => {
                 const $currentOnceAttribute = $(e);
                 const htmlToValidate = $.html($currentOnceAttribute).replace(/\s/g, "");
@@ -26,6 +26,7 @@ function plugin(pluginconfig = {}) {
                 }
                 onceAttributes[elementHash] = true;
             });
+            $onceAttributes.removeAttr(onceAttributeName);
             modulerizr.store.value(`${currentPath}.content`, $.html($(':root')));
         });
     }

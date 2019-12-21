@@ -9,19 +9,19 @@
         In this example we have scoped styles.
         With scoped styles they don't affect other components - neither child-components. 
       -->
-    <style m-once>
+    <style>
       .styleFromSrc {
         color: blue;
       }
     </style>
     <div data-v-734de3c9 id="734de3c9" data-component="scoped-styles-1">
-      <style m-once>
+      <style>
         /*These styles are global and can have siteeffects to all other components*/
         .globalFromComponent1 {
           color: red;
         }
       </style>
-      <style m-once>
+      <style>
         .local[data-v-734de3c9],
         .local_1[data-v-734de3c9] {
           color: green
@@ -33,7 +33,7 @@
       <div class="styleFromSrc" data-v-734de3c9>This text is blue, because the styledefinition comes from the src-file</div>
     </div>
     <div data-v-4d87162a id="4d87162a" data-component="scoped-styles-2">
-      <style m-once>
+      <style>
         .local[data-v-4d87162a] {
           color: brown
         }

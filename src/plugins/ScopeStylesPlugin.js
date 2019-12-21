@@ -20,10 +20,10 @@ function plugin(pluginconfig = {}) {
                 });
                 const parsedStyles = csstree.generate(ast);
                 $currentStyles.html(parsedStyles);
-                $currentStyles.removeAttr(scopedAttributeName)
             });
+            $styleTags.removeAttr(scopedAttributeName);
 
-            modulerizr.store.value(`${currentPath}.content`, $.html($(':root')));
+            modulerizr.store.value(`${currentPath}.content`, $.html(':root'));
             return;
         })
     }
