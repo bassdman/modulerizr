@@ -1,15 +1,20 @@
 const cheerio = require('cheerio');
 const csstree = require('css-tree');
 
-function plugin(pluginconfig = {}) {
-    const scopedAttributeName = pluginconfig.scopedAttributeName || 'm-scoped';
-
-    function ScopeStylesPlugin(modulerizr) {
+class ScopeStylesPlugin {
+    constructor(pluginconfig = {}) {
+        this.scopedAttributeName = pluginconfig.scopedAttributeName || 'm-scoped';
+        this.pluginType = "afterRender";
+        this.name = 'Modulerizr-ScopeStylesPlugin';
+        this.internal = true;
+        this.umgestellt = true;
+    }
+    apply(modulerizr) {
         return modulerizr.store.each("$.component.*", (currentFile, currentPath, i) => {
             const $ = cheerio.load(currentFile.content);
             $('*').not('style,script').attr('data-v-' + currentFile.id, "")
 
-            const $styleTags = $(`style[${scopedAttributeName}]`);
+            const $styleTags = $(`style[${this.scopedAttributeName}]`);
             $styleTags.each((i, e) => {
                 const $currentStyles = $(e);
                 const ast = csstree.parse($currentStyles.html());
@@ -21,20 +26,12 @@ function plugin(pluginconfig = {}) {
                 const parsedStyles = csstree.generate(ast);
                 $currentStyles.html(parsedStyles);
             });
-            $styleTags.removeAttr(scopedAttributeName);
+            $styleTags.removeAttr(this.scopedAttributeName);
 
             modulerizr.store.value(`${currentPath}.content`, $.html(':root'));
             return;
         })
     }
-
-    ScopeStylesPlugin.metadata = {
-        pluginType: "initial",
-        name: 'Modulerizr-ScopeStylesPlugin',
-        internal: true
-    }
-    return ScopeStylesPlugin;
 }
 
-
-exports.ScopeStylesPlugin = plugin;
+exports.ScopeStylesPlugin = ScopeStylesPlugin;

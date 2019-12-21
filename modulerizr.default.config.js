@@ -2,7 +2,7 @@ const { InitComponentsPlugin } = require("./src/plugins/InitComponentsPlugin");
 const { InitSrcPlugin } = require('./src/plugins/InitSrcPlugin');
 const { InitEmbeddedComponentsPlugin } = require("./src/plugins/InitEmbeddedComponentsPlugin")
 const { PreRenderPlugin } = require("./src/plugins/PreRenderPlugin")
-const { WriteDestFilesPlugin } = require("./src/plugins/writeDestFilesPlugin");
+const { WriteDestFilesPlugin } = require("./src/plugins/WriteDestFilesPlugin");
 const { ScopeStylesPlugin } = require("./src/plugins/ScopeStylesPlugin");
 const { ScopeScriptsPlugin } = require("./src/plugins/ScopeScriptsPlugin");
 const { OnceAttributePlugin } = require("./src/plugins/OnceAttributePlugin");
@@ -14,11 +14,11 @@ module.exports = {
     _plugins: [
         InitComponentsPlugin,
         InitSrcPlugin,
-        ScopeStylesPlugin(),
+        new ScopeStylesPlugin(),
         ScopeScriptsPlugin(),
         InitEmbeddedComponentsPlugin,
         PreRenderPlugin,
         OnceAttributePlugin(),
-        WriteDestFilesPlugin
+        new WriteDestFilesPlugin()
     ]
 }

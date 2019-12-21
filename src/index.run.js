@@ -45,8 +45,17 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
         }
         if (plugin.metadata)
             modulerizr.log(`execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}" ${internalText}.`, 'green');
+        else
+            modulerizr.log(`execute ${pluginType}-plugin "${plugin.name}" ${internalText}.`, 'green');
 
-        return Promise.resolve(plugin(modulerizr))
+        if (plugin.umgestellt) {
+            console.log('yaaay,umgestellt')
+            return Promise.resolve(plugin.apply(modulerizr))
+
+        } else {
+            return Promise.resolve(plugin(modulerizr))
+        }
+
     });
 
     return;
@@ -54,7 +63,7 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
 
 function getPlugins(plugins = [], pluginType, _default) {
     return plugins.filter(plugin => {
-        const currentPluginType = plugin.metadata ? plugin.metadata.pluginType : null;
+        const currentPluginType = plugin.metadata ? plugin.metadata.pluginType : plugin.pluginType;
 
         if (Array.isArray(currentPluginType)) {
             return currentPluginType.includes(pluginType) || (_default && currentPluginType == null);
