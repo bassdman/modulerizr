@@ -1,5 +1,4 @@
 const fs = require('fs-extra');
-const crypto = require('crypto');
 const path = require('path');
 
 function DebugPlugin(config) {

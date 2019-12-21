@@ -1,10 +1,11 @@
 const colors = require('colors/safe');
-
+const jp = require('jsonpath');
 const files = {
     components: {},
     src: {},
     embeddedComponents: {}
 };
+const store = {};
 
 function Modulerizr(config) {
     return {
@@ -47,8 +48,61 @@ function Modulerizr(config) {
                 console.log(text);
 
         },
-        config
+        config,
+        store: {
+            query(query, count) {
+                if (query == null)
+                    throw new Error('Modulerizr.store.query(query[,count]): query is undefined');
 
+                jp.query(store, query, count);
+            },
+            apply(query, fn) {
+                if (query == null)
+                    throw new Error('Modulerizr.store.apply(query,fn): query is undefined');
+
+                if (fn == null)
+                    throw new Error('Modulerizr.store.apply(query,fn): fn is undefined');
+
+                jp.apply(store, query, fn);
+            },
+            value(query, value) {
+                if (query == null)
+                    throw new Error('Modulerizr.store.value(query): query is undefined');
+
+                jp.value(store, query, value);
+            },
+            paths(query, count) {
+                if (query == null)
+                    throw new Error('Modulerizr.store.paths(query[,count]): query is undefined');
+
+                return jp.paths(store, query, count);
+            },
+            nodes(query, count) {
+                if (query == null)
+                    throw new Error('Modulerizr.store.nodes(query[,count]): query is undefined');
+
+                return jp.nodes(store, query, count);
+            },
+            parent(query) {
+                if (query == null)
+                    throw new Error('Modulerizr.store.parent(query): query is undefined');
+
+                return jp.parent(store, query, count);
+            },
+            each(query, fn) {
+                if (query == null)
+                    throw new Error('Modulerizr.store.parent(query): query is undefined');
+
+                const paths = jp.paths(store, query) || [];
+
+                for (let i in paths) {
+                    const path = paths[i].join('.');
+                    const value = jp.value(store, path);
+
+                    fn(value, path, i);
+                }
+            }
+        }
     }
 }
 
