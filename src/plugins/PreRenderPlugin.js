@@ -1,25 +1,33 @@
 const cheerio = require('cheerio');
 
-function PreRenderPlugin(modulerizr, currentFile) {
-    return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
-        let allComponentsRendered = false;
-        let level = 1;
-        let content = currentFile.content;
+class PreRenderPlugin {
+    constructor(pluginconfig = {}) {
+        this.pluginType = "afterRender";
+        this.name = 'Modulerizr-PreRenderPlugin';
+        this.internal = true;
+    }
+    apply(modulerizr) {
+        return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
+            let allComponentsRendered = false;
+            let level = 1;
+            let content = currentFile.content;
 
-        while (!allComponentsRendered) {
-            content = render(modulerizr, currentPath, content);
-            const $ = cheerio.load(content);
-            if ($('[data-render-comp]').length == 0)
-                allComponentsRendered = true;
+            while (!allComponentsRendered) {
+                content = render(modulerizr, currentPath, content);
+                const $ = cheerio.load(content);
+                if ($('[data-render-comp]').length == 0)
+                    allComponentsRendered = true;
 
-            if (level >= modulerizr.config.maxRecursionLevel) {
-                throw new Error('There is a Problem with infinite recursion in nested Elements. Sth like Component "A" includes Component "B"  and Component "B" includes Component "A". This leads to an infinite loop. Please fix this.');
+                if (level >= modulerizr.config.maxRecursionLevel) {
+                    throw new Error('There is a Problem with infinite recursion in nested Elements. Sth like Component "A" includes Component "B"  and Component "B" includes Component "A". This leads to an infinite loop. Please fix this.');
+                }
+                level++;
             }
-            level++;
-        }
 
-    });
+        });
+    }
 }
+
 
 function render(modulerizr, currentPath, content) {
     const $ = cheerio.load(content);
@@ -62,10 +70,5 @@ function replaceSlots(currentContent, componentElemConfig) {
     return $(':root').html();
 }
 
-PreRenderPlugin.metadata = {
-    pluginType: "afterRender",
-    name: 'Modulerizr-PreRenderPlugin',
-    internal: true
-}
 
 exports.PreRenderPlugin = PreRenderPlugin;

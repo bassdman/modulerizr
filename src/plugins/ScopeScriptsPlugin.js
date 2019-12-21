@@ -1,13 +1,17 @@
 const cheerio = require('cheerio');
 
-function plugin(pluginconfig = {}) {
-    const scopedAttributeName = pluginconfig.scopedAttributeName || 'm-scoped';
-
-    async function ScopeScriptsPlugin(modulerizr) {
+class ScopeScriptsPlugin {
+    constructor(pluginconfig = {}) {
+        this.scopedAttributeName = pluginconfig.scopedAttributeName || 'm-scoped';
+        this.pluginType = "initial";
+        this.name = 'Modulerizr-ScopeScriptsPlugin';
+        this.internal = true;
+    }
+    apply(modulerizr) {
         return modulerizr.store.each('$.component.*', (currentFile, currentPath) => {
             const $ = cheerio.load(currentFile.content);
 
-            const $scriptTags = $(`script[${scopedAttributeName}]`);
+            const $scriptTags = $(`script[${this.scopedAttributeName}]`);
             $scriptTags.each((i, e) => {
                 const $currentScripts = $(e);
 
@@ -22,23 +26,13 @@ function plugin(pluginconfig = {}) {
                     ${$currentScripts.html()}
                 })(window);`;
                 $currentScripts.html(scopedScript);
-                $currentScripts.removeAttr(scopedAttributeName)
+                $currentScripts.removeAttr(this.scopedAttributeName)
             });
 
             modulerizr.store.value(`${currentPath}.content`, $.html($(':root')))
             return;
         })
     }
-
-    ScopeScriptsPlugin.metadata = {
-        pluginType: "initial",
-        name: 'Modulerizr-ScopeScriptsPlugin',
-        internal: true
-    }
-
-    return ScopeScriptsPlugin;
 }
 
-
-
-exports.ScopeScriptsPlugin = plugin;
+exports.ScopeScriptsPlugin = ScopeScriptsPlugin;

@@ -5,33 +5,34 @@ const { globFiles } = require("../lib/globFiles");
 const { ensureArray } = require('../lib/utils');
 const foreachPromise = require('../lib/foreachPromise');
 
-async function InitSrcPlugin(modulerizr) {
+class InitSrcPlugin {
+    constructor(pluginconfig = {}) {
+        this.pluginType = "initial";
+        this.name = 'Modulerizr-InitSrcPlugin';
+        this.internal = true;
+    }
+    async apply(modulerizr) {
+        if (modulerizr.config.src == undefined)
+            throw new Error('Error in your modulerizr.config: "src" is undefined but required.', 'red');
 
-    if (modulerizr.config.src == undefined)
-        throw new Error('Error in your modulerizr.config: "src" is undefined but required.', 'red');
+        const srcFiles = await globFiles(ensureArray(modulerizr.config.src), modulerizr.config._rootPath);
+        logFoundFiles(srcFiles, modulerizr);
 
-    const srcFiles = await globFiles(ensureArray(modulerizr.config.src), modulerizr.config._rootPath);
-    logFoundFiles(srcFiles, modulerizr);
+        return foreachPromise(srcFiles, async filePath => {
+            const content = await fs.readFile(filePath, "UTF-8")
 
-    return foreachPromise(srcFiles, async filePath => {
-        const content = await fs.readFile(filePath, "UTF-8")
+            const retObj = {
+                content,
+                original: content,
+                path: filePath,
+                key: filePath,
+                id: crypto.createHash('md5').update(content).digest("hex").substring(0, 8)
+            };
 
-        const retObj = {
-            content,
-            original: content,
-            path: filePath,
-            key: filePath,
-            id: crypto.createHash('md5').update(content).digest("hex").substring(0, 8)
-        };
-
-        modulerizr.store.value(`$.src.id_${retObj.id}`, retObj);
-        return retObj;
-    })
-}
-InitSrcPlugin.metadata = {
-    pluginType: "initial",
-    name: 'Modulerizr-InitSrcPlugin',
-    internal: true
+            modulerizr.store.value(`$.src.id_${retObj.id}`, retObj);
+            return retObj;
+        })
+    }
 }
 
 function logFoundFiles(fileNames, modulerizr) {

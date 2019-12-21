@@ -7,7 +7,6 @@ class WriteDestFilesPlugin {
         this.pluginType = "afterRender";
         this.name = 'Modulerizr-WriteDestFilesPlugin';
         this.internal = true;
-        this.umgestellt = true;
     }
     async apply(modulerizr) {
         const destpath = modulerizr.config.dest;

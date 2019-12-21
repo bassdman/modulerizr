@@ -1,49 +1,45 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-function DebugPlugin(config) {
-    function debugplugin(modulerizr) {
-        modulerizr.config.plugins.push(createDebugFilePlugin);
+class DebugPlugin {
+    constructor(pluginconfig = {}) {
+        this.pluginType = "initial";
+        this.name = 'Modulerizr-DebugPlugin';
+        this.internal = true;
+        this.config = pluginconfig;
+    }
+    async apply(modulerizr) {
+        modulerizr.config.plugins.push(new createDebugFilePlugin());
 
-        if (!config.ignorePlugins) {
+        if (!this.config.ignorePlugins) {
             console.log('No Plugins are ignored (use debugPlugin({ignorePlugins:["Name-ofPlugin"]}) to ignore Plugins)');
         }
-        if (config.ignorePlugins) {
-            let ignorePlugins = config.ignorePlugins;
+        if (this.config.ignorePlugins) {
+            let ignorePlugins = this.config.ignorePlugins;
             if (!Array.isArray(ignorePlugins))
                 ignorePlugins = [ignorePlugins];
 
             modulerizr.config.plugins = modulerizr.config.plugins.map(plugin => {
-                if (!plugin.metadata)
-                    return plugin;
-
-                if (ignorePlugins.includes(plugin.metadata.name)) {
-                    plugin.metadata.ignore = true;
-                    plugin.metadata.log = 'Plugin "#name" won\'t be executed - it is ignored by the DebugPlugin.';
-                    plugin.metadata.logColor = "red";
+                if (ignorePlugins.includes(plugin.name)) {
+                    plugin.ignore = true;
+                    plugin.log = 'Plugin "#name" won\'t be executed - it is ignored by the DebugPlugin.';
+                    plugin.logColor = "red";
                 }
                 return plugin;
             })
         }
     }
-    debugplugin.metadata = {
-        pluginType: "initial",
-        name: 'Modulerizr-DebugPlugin',
-        internal: true
+}
+
+class createDebugFilePlugin {
+    constructor(pluginconfig = {}) {
+        this.pluginType = "afterRender";
+        this.name = 'Modulerizr-CreateDebugFilePlugin';
+        this.internal = true;
     }
-
-
-    return debugplugin;
-}
-
-
-async function createDebugFilePlugin(modulerizr) {
-    await fs.writeFile(path.join(modulerizr.config.dest, 'modulerizr-debug.config.json'), JSON.stringify({ config: modulerizr.config, store: modulerizr.store.queryOne('$') }, null, 1));
-}
-createDebugFilePlugin.metadata = {
-    pluginType: "afterRender",
-    name: 'Modulerizr-CreateDebugFilePlugin',
-    internal: true
+    async apply(modulerizr) {
+        return await fs.writeFile(path.join(modulerizr.config.dest, 'modulerizr-debug.config.json'), JSON.stringify({ config: modulerizr.config, store: modulerizr.store.queryOne('$') }, null, 1));
+    }
 }
 
 exports.DebugPlugin = DebugPlugin;

@@ -4,10 +4,9 @@ const csstree = require('css-tree');
 class ScopeStylesPlugin {
     constructor(pluginconfig = {}) {
         this.scopedAttributeName = pluginconfig.scopedAttributeName || 'm-scoped';
-        this.pluginType = "afterRender";
+        this.pluginType = "initial";
         this.name = 'Modulerizr-ScopeStylesPlugin';
         this.internal = true;
-        this.umgestellt = true;
     }
     apply(modulerizr) {
         return modulerizr.store.each("$.component.*", (currentFile, currentPath, i) => {

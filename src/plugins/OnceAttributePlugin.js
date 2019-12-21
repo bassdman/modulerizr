@@ -1,20 +1,25 @@
 const cheerio = require('cheerio');
 const crypto = require('crypto');
 
-function plugin(pluginconfig = {}) {
-    const onceAttributeName = pluginconfig.onceAttributeName || 'm-once';
+class OnceAttributePlugin {
+    constructor(pluginconfig = {}) {
+        this.onceAttributeName = pluginconfig.onceAttributeName || 'm-once';
 
-    async function OnceAttributePlugin(modulerizr) {
+        this.pluginType = "afterRender";
+        this.name = 'Modulerizr-OnceAttributePlugin';
+        this.internal = true;
+    }
+    apply(modulerizr) {
         return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
             const onceAttributes = {};
             const $ = cheerio.load(currentFile.content);
 
-            logIfExternalScriptWithoutOnceFound(modulerizr, $, onceAttributeName);
+            logIfExternalScriptWithoutOnceFound(modulerizr, $, this.onceAttributeName);
 
             //identical style Tags are automatically rendered once
-            $('style').attr(onceAttributeName, "");
+            $('style').attr(this.onceAttributeName, "");
 
-            const $onceAttributes = $(`[${onceAttributeName}]`);
+            const $onceAttributes = $(`[${this.onceAttributeName}]`);
             $onceAttributes.each((i, e) => {
                 const $currentOnceAttribute = $(e);
                 const htmlToValidate = $.html($currentOnceAttribute).replace(/\s/g, "");
@@ -26,17 +31,10 @@ function plugin(pluginconfig = {}) {
                 }
                 onceAttributes[elementHash] = true;
             });
-            $onceAttributes.removeAttr(onceAttributeName);
+            $onceAttributes.removeAttr(this.onceAttributeName);
             modulerizr.store.value(`${currentPath}.content`, $.html($(':root')));
         });
     }
-    OnceAttributePlugin.metadata = {
-        pluginType: "afterRender",
-        name: 'Modulerizr-OnceAttributePlugin',
-        internal: true
-    }
-
-    return OnceAttributePlugin;
 }
 
 function logIfExternalScriptWithoutOnceFound(modulerizr, $, onceAttributeName) {
@@ -63,4 +61,4 @@ function logIfExternalScriptWithoutOnceFound(modulerizr, $, onceAttributeName) {
     });
 }
 
-exports.OnceAttributePlugin = plugin;
+exports.OnceAttributePlugin = OnceAttributePlugin;

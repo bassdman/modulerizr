@@ -12,13 +12,13 @@ module.exports = {
     defaultComponentWrapper: "div",
     maxRecursionLevel: 100,
     _plugins: [
-        InitComponentsPlugin,
-        InitSrcPlugin,
+        new InitComponentsPlugin(),
+        new InitSrcPlugin(),
+        new InitEmbeddedComponentsPlugin(),
         new ScopeStylesPlugin(),
-        ScopeScriptsPlugin(),
-        InitEmbeddedComponentsPlugin,
-        PreRenderPlugin,
-        OnceAttributePlugin(),
+        new ScopeScriptsPlugin(),
+        new PreRenderPlugin(),
+        new OnceAttributePlugin(),
         new WriteDestFilesPlugin()
     ]
 }

@@ -34,28 +34,17 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
         modulerizr.log(`No ${pluginType}-plugins found.`)
 
     await foreachPromise(plugins, async plugin => {
-        const pluginMetadata = plugin.metadata || {};
-        const internalText = pluginMetadata.internal ? "(Internal)" : "";
+        const internalText = plugin.internal ? "(Internal)" : "";
 
-        if (pluginMetadata.log) {
-            modulerizr.log(pluginMetadata.log.replace("#name", pluginMetadata.name), pluginMetadata.logColor);
+        if (plugin.log) {
+            modulerizr.log(plugin.log.replace("#name", plugin.name), plugin.logColor);
         }
-        if (pluginMetadata.ignore) {
+        if (plugin.ignore) {
             return;
         }
-        if (plugin.metadata)
-            modulerizr.log(`execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}" ${internalText}.`, 'green');
-        else
-            modulerizr.log(`execute ${pluginType}-plugin "${plugin.name}" ${internalText}.`, 'green');
+        modulerizr.log(`execute ${pluginType}-plugin "${plugin.name}" ${internalText}.`, 'green');
 
-        if (plugin.umgestellt) {
-            console.log('yaaay,umgestellt')
-            return Promise.resolve(plugin.apply(modulerizr))
-
-        } else {
-            return Promise.resolve(plugin(modulerizr))
-        }
-
+        return Promise.resolve(plugin.apply(modulerizr))
     });
 
     return;
@@ -63,7 +52,7 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
 
 function getPlugins(plugins = [], pluginType, _default) {
     return plugins.filter(plugin => {
-        const currentPluginType = plugin.metadata ? plugin.metadata.pluginType : plugin.pluginType;
+        const currentPluginType = plugin.pluginType || 'beforeRender';
 
         if (Array.isArray(currentPluginType)) {
             return currentPluginType.includes(pluginType) || (_default && currentPluginType == null);

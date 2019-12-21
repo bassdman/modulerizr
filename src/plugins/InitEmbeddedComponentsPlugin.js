@@ -1,10 +1,17 @@
 const cheerio = require('cheerio');
 const crypto = require('crypto');
 
-function InitEmbeddedComponentsPlugin(modulerizr) {
-    return modulerizr.store.each('$["src","component"].*', (currentFile, currentPath, i) => {
-        return addEmbeddedComponents(modulerizr, currentFile, currentPath, i);
-    })
+class InitEmbeddedComponentsPlugin {
+    constructor(pluginconfig = {}) {
+        this.pluginType = "initial";
+        this.name = 'Modulerizr-InitEmbeddedComponentsPlugin';
+        this.internal = true;
+    }
+    async apply(modulerizr) {
+        return modulerizr.store.each('$["src","component"].*', (currentFile, currentPath, i) => {
+            return addEmbeddedComponents(modulerizr, currentFile, currentPath, i);
+        })
+    }
 }
 
 function addEmbeddedComponents(modulerizr, currentFile, currentPathAll, i) {
@@ -65,12 +72,6 @@ function getWrapperTag(componentWrapperTag, configWrapperTag) {
     const initialWrapperTag = componentWrapperTag || configWrapperTag;
     const modifiedWrapperTag = `<${initialWrapperTag}>`.replace('<<', '<').replace('>>', '>');
     return modifiedWrapperTag;
-}
-
-InitEmbeddedComponentsPlugin.metadata = {
-    pluginType: 'initial',
-    name: 'Modulerizr-InitEmbeddedComponentsPlugin',
-    internal: true
 }
 
 exports.InitEmbeddedComponentsPlugin = InitEmbeddedComponentsPlugin;
