@@ -1,41 +1,11 @@
 const colors = require('colors/safe');
 const jp = require('jsonpath');
-const files = {
-    components: {},
-    src: {},
-    embeddedComponents: {}
-};
-const store = {};
+const foreachPromise = require('./foreachPromise');
 
 function Modulerizr(config) {
+    const store = {};
+
     return {
-        set(type, name, obj) {
-            if (name == null)
-                throw new Error('Modulerizr.set(type,name,config): Name is not defined. Which Src-File do you mean?');
-
-            if (!typeof obj == 'object')
-                throw new Error('Modulerizr.set(type,name,config): config must be an object.');
-
-            if (files[type] == null) {
-                files[type] = {};
-            }
-
-            files[type][name] = Object.assign((files[type][name] || {}), obj);
-        },
-        get(type, name) {
-            if (name == null) {
-                return files[type];
-            }
-
-            if (files[type] == null) {
-                files[type] = {};
-            }
-            return files[type][name];
-        },
-        exists(type, name) {
-            const value = this.get(type, name);
-            return value != null;
-        },
         log(text, color) {
             if (!config.debug)
                 return;
@@ -54,7 +24,13 @@ function Modulerizr(config) {
                 if (query == null)
                     throw new Error('Modulerizr.store.query(query[,count]): query is undefined');
 
-                jp.query(store, query, count);
+                return jp.query(store, query, count);
+            },
+            queryOne(query, count) {
+                if (query == null)
+                    throw new Error('Modulerizr.store.query(query[,count]): query is undefined');
+
+                return jp.query(store, query, count)[0];
             },
             apply(query, fn) {
                 if (query == null)
@@ -93,19 +69,16 @@ function Modulerizr(config) {
                 if (query == null)
                     throw new Error('Modulerizr.store.parent(query): query is undefined');
 
-                const paths = jp.paths(store, query) || [];
+                const nodes = jp.nodes(store, query) || [];
 
-                for (let i in paths) {
-                    const path = paths[i].join('.');
-                    const value = jp.value(store, path);
+                return foreachPromise(nodes, (node, i) => {
+                    const _path = node.path.join('.');
 
-                    fn(value, path, i);
-                }
+                    return fn(node.value, _path, i);
+                })
             }
         }
     }
 }
 
 exports.Modulerizr = Modulerizr;
-exports.components = files.components;
-exports.src = files.src

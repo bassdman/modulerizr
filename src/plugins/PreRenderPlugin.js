@@ -1,16 +1,13 @@
 const cheerio = require('cheerio');
-const foreachPromise = require('../lib/foreachPromise');
 
 function PreRenderPlugin(modulerizr, currentFile) {
-    const srcFiles = Object.values(modulerizr.get('src'));
-
-    return foreachPromise(srcFiles, async currentFile => {
+    return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
         let allComponentsRendered = false;
         let level = 1;
         let content = currentFile.content;
 
         while (!allComponentsRendered) {
-            content = render(modulerizr, currentFile, content);
+            content = render(modulerizr, currentPath, content);
             const $ = cheerio.load(content);
             if ($('[data-render-comp]').length == 0)
                 allComponentsRendered = true;
@@ -21,18 +18,17 @@ function PreRenderPlugin(modulerizr, currentFile) {
             level++;
         }
 
-
     });
 }
 
-function render(modulerizr, currentFile, content) {
+function render(modulerizr, currentPath, content) {
     const $ = cheerio.load(content);
 
     const $componentsToRender = $('[data-render-comp]');
     $componentsToRender.each((i, e) => {
         const $currentComp = $(e);
         const componentId = $currentComp.attr('data-component-id');
-        const componentElemConfig = modulerizr.get('embeddedComponents', componentId);
+        const componentElemConfig = modulerizr.store.queryOne(`$.embeddedComponents.id_${componentId}`);
 
         if (componentElemConfig.wrapperTag != null) {
             $currentComp.wrap(componentElemConfig.wrapperTag);
@@ -42,12 +38,12 @@ function render(modulerizr, currentFile, content) {
                 .attr("data-component", componentElemConfig.tag)
         }
 
+        const componentConfig = modulerizr.store.queryOne(`$.component.id_${componentElemConfig.componentId}`);
 
-        const componentConfig = Object.values(modulerizr.get('components')).filter(comp => comp.name == componentElemConfig.tag)[0]
         const replacedContent = replaceSlots(componentConfig.content, componentElemConfig);
         $currentComp.replaceWith(replacedContent.trim());
     });
-    modulerizr.set('src', currentFile.key, { content: $.html($(':root')) });
+    modulerizr.store.value(`${currentPath}.content`, $.html($(':root')));
 
     return $(':root').html();
 }

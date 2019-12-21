@@ -1,20 +1,22 @@
 const cheerio = require('cheerio');
 const crypto = require('crypto');
 
-function InitEmbeddedComponentsPlugin(modulerizr, currentFile) {
+function InitEmbeddedComponentsPlugin(modulerizr) {
+    return modulerizr.store.each('$["src","component"].*', (currentFile, currentPath, i) => {
+        return addEmbeddedComponents(modulerizr, currentFile, currentPath, i);
+    })
+}
+
+function addEmbeddedComponents(modulerizr, currentFile, currentPathAll, i) {
     const $ = cheerio.load(currentFile.content);
-    const componentNames = Object.keys(modulerizr.get('components'));
     const globalWrapperTag = modulerizr.config.defaultComponentWrapper;
-    const embeddedComponents = [];
 
-    for (let componentName of componentNames) {
-        const componentConfig = modulerizr.get('components', componentName);
-
-        let $allComponents = $(componentConfig.name);
+    return modulerizr.store.each("$.component.*", (component, currentPath, i) => {
+        let $allComponents = $(component.name);
         const componentExists = $allComponents.length > 0;
 
         if (!componentExists)
-            continue;
+            return;
 
         $allComponents.each((i, e) => {
             const $currentComp = $(e);
@@ -31,22 +33,16 @@ function InitEmbeddedComponentsPlugin(modulerizr, currentFile) {
                 content: $.html($currentComp),
                 wrapperTag: getWrapperTag(attributes.wrapper || globalWrapperTag),
                 innerHtml: $currentComp.html(),
-                componentId: componentConfig.id,
-                abc: 'def',
+                componentId: component.id,
                 original,
                 attributes,
                 slots: getSlots($currentComp, $)
             }
-            embeddedComponents.push(componentId);
-            modulerizr.set('embeddedComponents', componentId, embeddedComponentsConfig);
-
+            modulerizr.store.value(`$.embeddedComponents.id_${componentId}`, embeddedComponentsConfig);
+            modulerizr.store.value(`${currentPathAll}.content`, $.html(':root'));
         });
-    }
-
-    return {
-        embeddedComponents,
-        content: $.html(':root')
-    }
+    })
+    return;
 }
 
 function getSlots($comp, $) {
@@ -72,7 +68,7 @@ function getWrapperTag(componentWrapperTag, configWrapperTag) {
 }
 
 InitEmbeddedComponentsPlugin.metadata = {
-    pluginType: ['src', 'component'],
+    pluginType: 'initial',
     name: 'Modulerizr-InitEmbeddedComponentsPlugin',
     internal: true
 }

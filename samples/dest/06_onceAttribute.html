@@ -26,7 +26,7 @@
       </script>
 
       <!--styles are rendered once automatically-->
-      <style>
+      <style m-once>
         .color[data-v-594a0367] {
           color: green
         }
@@ -37,7 +37,7 @@
       <script src="path/to/js-file.js"></script>
 
       <!--This will be rendered once-->
-      <script src="path/to/js-file-once.js" m-once></script>
+      <!-- Here was a component with attribute "m-once", which also exists above. -->
 
       <link href="path/to/css.css" data-v-594a0367>
 
@@ -46,16 +46,10 @@
         var renderedMultipleTimes = 'component';
       </script>
 
-      <script m-once>
-        var renderedOnce = 'once';
-      </script>
+      <!-- Here was a component with attribute "m-once", which also exists above. -->
 
       <!--styles are rendered once automatically-->
-      <style>
-        .color[data-v-594a0367] {
-          color: green
-        }
-      </style>
+      <!-- Here was a component with attribute "m-once", which also exists above. -->
     </div>
 
 

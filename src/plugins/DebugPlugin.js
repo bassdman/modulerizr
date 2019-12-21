@@ -38,7 +38,7 @@ function DebugPlugin(config) {
 
 
 async function createDebugFilePlugin(modulerizr) {
-    await fs.writeFile(path.join(modulerizr.config.dest, 'modulerizr-debug.config.json'), JSON.stringify({ src: modulerizr.get('src'), components: modulerizr.get('components'), embeddedComponents: modulerizr.get('embeddedComponents'), config: modulerizr.config }, null, 1));
+    await fs.writeFile(path.join(modulerizr.config.dest, 'modulerizr-debug.config.json'), JSON.stringify({ config: modulerizr.config, store: modulerizr.store.queryOne('$') }, null, 1));
 }
 createDebugFilePlugin.metadata = {
     pluginType: "afterRender",

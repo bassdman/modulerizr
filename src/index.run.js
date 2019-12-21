@@ -1,4 +1,3 @@
-const { globFiles } = require("./lib/globFiles");
 const foreachPromise = require('./lib/foreachPromise');
 const { Modulerizr } = require('./lib/Modulerizr');
 const color = require('colors');
@@ -20,15 +19,10 @@ async function runOne(_config) {
     config.plugins = (config._plugins).concat(config.plugins || []);
     const modulerizr = new Modulerizr(config);
 
-    await saveInStore(modulerizr, 'src');
-    await saveInStore(modulerizr, 'components');
-
     modulerizr.log(`\nThe rootPath is: ${config._rootPath}`);
     modulerizr.log(`\nApplyPlugins:`);
 
     await executeFilePlugins('initial', modulerizr);
-    await executeFilePlugins('component', modulerizr, 'components');
-    await executeFilePlugins('src', modulerizr, 'src');
     await executeFilePlugins('beforeRender', modulerizr, null, 'default');
     return await executeFilePlugins('afterRender', modulerizr);
 }
@@ -52,53 +46,10 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
         if (plugin.metadata)
             modulerizr.log(`execute ${pluginType}-plugin "${pluginMetadata.name || plugin.name}" ${internalText}.`, 'green');
 
-        if (pluginType != 'src' && pluginType != 'component') {
-            return Promise.resolve(plugin(modulerizr))
-        } else {
-            const files = modulerizr.get(dataType);
-            await foreachPromise(Object.values(files), async currentFile => {
-                const pluginResult = plugin(modulerizr, currentFile);
-
-                if (pluginResult == null) {
-                    return null;
-                } else if (pluginResult.then !== null) {
-                    const promisedPluginResult = await pluginResult;
-                    modulerizr.set(dataType, currentFile.key, promisedPluginResult);
-                } else {
-                    modulerizr.set(dataType, currentFile.key, pluginResult);
-                }
-                return pluginResult;
-            });
-        }
-        return;
+        return Promise.resolve(plugin(modulerizr))
     });
 
     return;
-}
-
-async function saveInStore(modulerizr, type) {
-    const config = modulerizr.config;
-    const fileNames = await globFiles(prepareConfigEntry(config[type], type), config._rootPath);
-    fileNames.forEach(file => {
-        modulerizr.set(type, file, {
-            key: file
-        });
-    })
-    if (fileNames.length == 0) {
-        modulerizr.log(`Sorry, no ${type}-files found. Modify the entry "${type}" in your modulerizr config to match some files.`, 'red');
-    } else {
-        modulerizr.log(`\nFound the following ${type}-files:`, 'green');
-        fileNames.forEach(file => modulerizr.log(`   - ${file}`));
-    }
-
-}
-
-function prepareConfigEntry(src, type) {
-    if (src == undefined)
-        throw new Error('Error in your modulerizr.config: ' + type + ' is undefined but required.', 'red');
-    if (Array.isArray(src))
-        return src;
-    return [src];
 }
 
 function getPlugins(plugins = [], pluginType, _default) {
