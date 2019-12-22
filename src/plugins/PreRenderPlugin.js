@@ -2,7 +2,6 @@ const cheerio = require('cheerio');
 
 class PreRenderPlugin {
     constructor(pluginconfig = {}) {
-        this.name = 'Modulerizr-PreRenderPlugin';
         this.internal = true;
     }
     apply(modulerizr) {

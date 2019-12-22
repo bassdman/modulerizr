@@ -4,7 +4,6 @@ const crypto = require('crypto');
 class OnceAttributePlugin {
     constructor(pluginconfig = {}) {
         this.onceAttributeName = pluginconfig.onceAttributeName || 'm-once';
-        this.name = 'Modulerizr-OnceAttributePlugin';
         this.internal = true;
     }
     apply(modulerizr) {

@@ -32,10 +32,7 @@ async function runOne(_config) {
 }
 
 async function initializePlugins(modulerizr) {
-    const plugins = getPlugins(modulerizr.config.plugins, null);
-
-    if (plugins.length == 0)
-        modulerizr.log(`No ${pluginType}-plugins found.`)
+    const plugins = modulerizr.config.plugins;
 
     await foreachPromise(plugins, async plugin => {
         const internalText = plugin.internal ? "(Internal)" : "";
@@ -43,42 +40,13 @@ async function initializePlugins(modulerizr) {
         if (plugin.ignore) {
             return;
         }
-        modulerizr.log(`Initialize plugin "${plugin.name}" ${internalText}.`, 'green');
+        modulerizr.store.value('$.plugins.current', plugin);
 
         return Promise.resolve(plugin.apply(modulerizr))
     });
 
+    modulerizr.log('');
     return;
-}
-
-async function executeFilePlugins(pluginType, modulerizr, dataType = null) {
-    const plugins = getPlugins(modulerizr.config.plugins, pluginType);
-
-    if (plugins.length == 0 && pluginType != 'render')
-        modulerizr.log(`No ${pluginType}-plugins found.`)
-
-    await foreachPromise(plugins, async plugin => {
-        const internalText = plugin.internal ? "(Internal)" : "";
-
-        if (plugin.log) {
-            modulerizr.log(plugin.log.replace("#name", plugin.name), plugin.logColor);
-        }
-        if (plugin.ignore) {
-            return;
-        }
-        modulerizr.log(`execute ${pluginType}-plugin "${plugin.name}" ${internalText}.`, 'green');
-
-        return Promise.resolve(plugin.apply(modulerizr))
-    });
-
-    return;
-}
-
-
-function getPlugins(plugins = [], pluginType, _default) {
-    return plugins.filter(plugin => {
-        return pluginType == plugin.pluginType;
-    });
 }
 
 exports.run = run;

@@ -4,7 +4,6 @@ const csstree = require('css-tree');
 class ScopeStylesPlugin {
     constructor(pluginconfig = {}) {
         this.scopedAttributeName = pluginconfig.scopedAttributeName || 'm-scoped';
-        this.name = 'Modulerizr-ScopeStylesPlugin';
         this.internal = true;
     }
     apply(modulerizr) {

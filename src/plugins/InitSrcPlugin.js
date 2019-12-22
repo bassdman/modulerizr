@@ -7,7 +7,6 @@ const foreachPromise = require('../lib/foreachPromise');
 
 class InitSrcPlugin {
     constructor(pluginconfig = {}) {
-        this.name = 'Modulerizr-InitSrcPlugin';
         this.internal = true;
     }
     async apply(modulerizr) {
@@ -15,11 +14,10 @@ class InitSrcPlugin {
             throw new Error('Error in your modulerizr.config: "src" is undefined but required.', 'red');
 
         modulerizr.plugins.on('init', async() => {
-            console.log('start init initsrcplugin');
             const srcFiles = await globFiles(ensureArray(modulerizr.config.src), modulerizr.config._rootPath);
             logFoundFiles(srcFiles, modulerizr);
 
-            await foreachPromise(srcFiles, async filePath => {
+            return await foreachPromise(srcFiles, async filePath => {
                 const content = await fs.readFile(filePath, "UTF-8")
 
                 const retObj = {
@@ -33,9 +31,6 @@ class InitSrcPlugin {
                 modulerizr.store.value(`$.src.id_${retObj.id}`, retObj);
                 return retObj;
             });
-            console.log('ende init initsrcplugin');
-
-            return;
         })
     }
 }

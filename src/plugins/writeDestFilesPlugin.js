@@ -4,7 +4,6 @@ const pretty = require('pretty');
 
 class WriteDestFilesPlugin {
     constructor(pluginconfig = {}) {
-        this.name = 'Modulerizr-WriteDestFilesPlugin';
         this.internal = true;
     }
     async apply(modulerizr) {

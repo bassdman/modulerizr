@@ -8,7 +8,7 @@ const foreachPromise = require('./foreachPromise');
 function Modulerizr(config) {
     const store = {};
 
-    return {
+    const modulerizr = {
         log(text, color) {
             if (!config.debug)
                 return;
@@ -22,7 +22,6 @@ function Modulerizr(config) {
 
         },
         config,
-        plugins: new SynchronousEventEmitter(),
         store: {
             query(query, count) {
                 if (query == null)
@@ -83,6 +82,18 @@ function Modulerizr(config) {
             }
         }
     }
+
+    modulerizr.plugins = new SynchronousEventEmitter({
+        beforeEmit(eventname, event) {
+
+            modulerizr.log(colors.green(`Run ${eventname}-event of plugin "${event.currentPlugin.constructor.name  }".`));
+        },
+        beforeOn(eventname, fn) {
+            fn.currentPlugin = modulerizr.store.queryOne('$.plugins.current');
+        }
+    });
+
+    return modulerizr;
 }
 
 exports.Modulerizr = Modulerizr;

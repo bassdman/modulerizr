@@ -3,7 +3,6 @@ const cheerio = require('cheerio');
 class ScopeScriptsPlugin {
     constructor(pluginconfig = {}) {
         this.scopedAttributeName = pluginconfig.scopedAttributeName || 'm-scoped';
-        this.name = 'Modulerizr-ScopeScriptsPlugin';
         this.internal = true;
     }
     apply(modulerizr) {

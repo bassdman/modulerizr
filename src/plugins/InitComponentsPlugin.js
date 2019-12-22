@@ -8,7 +8,6 @@ const foreachPromise = require('../lib/foreachPromise');
 
 class InitComponentsPlugin {
     constructor(pluginconfig = {}) {
-        this.name = 'Modulerizr-InitComponentsPlugin';
         this.internal = true;
     }
     async apply(modulerizr) {
@@ -16,8 +15,6 @@ class InitComponentsPlugin {
             throw new Error('Error in your modulerizr.config: "src" is undefined but required.', 'red');
 
         modulerizr.plugins.on('init', async() => {
-            console.log('start init initcomponentplugin');
-
             const componentFiles = await globFiles(ensureArray(modulerizr.config.components), modulerizr.config._rootPath);
             logFoundFiles(componentFiles, modulerizr);
 
@@ -48,7 +45,6 @@ class InitComponentsPlugin {
 
                 return retVal;
             })
-            console.log('ende init initcomponentplugin');
         });
     }
 }
