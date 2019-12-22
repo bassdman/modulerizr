@@ -7,13 +7,14 @@ class SynchronousEventEmitter {
         this.afterEmit = config.afterEmit;
         this.beforeOn = config.beforeOn;
     }
-    async on(eventname, fn) {
-        if (eventname == null)
+    async on(_eventname, fn) {
+        if (_eventname == null)
             throw new Error('EventEmitter.on(eventname,fn) - eventname is undefined but required');
 
         if (fn == null)
             throw new Error('EventEmitter.on(eventname,fn) - fn is undefined but required');
 
+        const eventname = _eventname.toLowerCase();
         if (this.events[eventname] == null)
             this.events[eventname] = [];
 
@@ -22,7 +23,11 @@ class SynchronousEventEmitter {
 
         this.events[eventname].push(fn);
     }
-    async emit(eventname) {
+    async emit(_eventname) {
+        if (_eventname == null)
+            throw new Error('SynchronousEventEmitter.emit(eventname): eventname is undefined but required');
+
+        const eventname = _eventname.toLowerCase();
         const plugins = this.events[eventname] || [];
 
         return await foreachPromise(plugins, async plugin => {

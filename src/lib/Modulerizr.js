@@ -91,7 +91,11 @@ function Modulerizr(config) {
             if (modulerizr.store.queryOne(`$.plugins.${event.currentPlugin.constructor.name}.${eventname}.isactive`) === false)
                 return false;
 
-            modulerizr.log(`Run "${eventname}"-event of plugin "${event.currentPlugin.constructor.name  }".`, 'blue');
+            modulerizr.log(`Execute "${eventname}"-event of plugin "${event.currentPlugin.constructor.name  }".`, 'blue');
+            modulerizr.plugins.emit(`${event.currentPlugin.constructor.name }_start`);
+        },
+        afterEmit(eventname, result, event) {
+            modulerizr.plugins.emit(`${event.currentPlugin.constructor.name }_finished`);
         },
         beforeOn(eventname, fn) {
             fn.currentPlugin = modulerizr.store.queryOne('$.plugins._current');
