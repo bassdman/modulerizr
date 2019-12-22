@@ -22,13 +22,37 @@ async function runOne(_config) {
     modulerizr.log(`\nThe rootPath is: ${config._rootPath}`);
     modulerizr.log(`\nApplyPlugins:`);
 
-    await executeFilePlugins('initial', modulerizr);
-    await executeFilePlugins('beforeRender', modulerizr, null, 'default');
-    return await executeFilePlugins('afterRender', modulerizr);
+    await initializePlugins(modulerizr);
+
+    await modulerizr.plugins.emit('init');
+    await modulerizr.plugins.emit('ready');
+    await modulerizr.plugins.emit('render');
+    await modulerizr.plugins.emit('afterRender');
+    await modulerizr.plugins.emit('deploy');
 }
 
-async function executeFilePlugins(pluginType, modulerizr, dataType = null, _default = false) {
-    const plugins = getPlugins(modulerizr.config.plugins, pluginType, _default);
+async function initializePlugins(modulerizr) {
+    const plugins = getPlugins(modulerizr.config.plugins, null);
+
+    if (plugins.length == 0)
+        modulerizr.log(`No ${pluginType}-plugins found.`)
+
+    await foreachPromise(plugins, async plugin => {
+        const internalText = plugin.internal ? "(Internal)" : "";
+
+        if (plugin.ignore) {
+            return;
+        }
+        modulerizr.log(`Initialize plugin "${plugin.name}" ${internalText}.`, 'green');
+
+        return Promise.resolve(plugin.apply(modulerizr))
+    });
+
+    return;
+}
+
+async function executeFilePlugins(pluginType, modulerizr, dataType = null) {
+    const plugins = getPlugins(modulerizr.config.plugins, pluginType);
 
     if (plugins.length == 0 && pluginType != 'render')
         modulerizr.log(`No ${pluginType}-plugins found.`)
@@ -50,14 +74,10 @@ async function executeFilePlugins(pluginType, modulerizr, dataType = null, _defa
     return;
 }
 
+
 function getPlugins(plugins = [], pluginType, _default) {
     return plugins.filter(plugin => {
-        const currentPluginType = plugin.pluginType || 'beforeRender';
-
-        if (Array.isArray(currentPluginType)) {
-            return currentPluginType.includes(pluginType) || (_default && currentPluginType == null);
-        } else
-            return pluginType == currentPluginType || (_default && currentPluginType == null);
+        return pluginType == plugin.pluginType;
     });
 }
 

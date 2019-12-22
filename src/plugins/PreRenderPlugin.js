@@ -2,29 +2,29 @@ const cheerio = require('cheerio');
 
 class PreRenderPlugin {
     constructor(pluginconfig = {}) {
-        this.pluginType = "afterRender";
         this.name = 'Modulerizr-PreRenderPlugin';
         this.internal = true;
     }
     apply(modulerizr) {
-        return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
-            let allComponentsRendered = false;
-            let level = 1;
-            let content = currentFile.content;
+        modulerizr.plugins.on('render', async() => {
+            return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
+                let allComponentsRendered = false;
+                let level = 1;
+                let content = currentFile.content;
 
-            while (!allComponentsRendered) {
-                content = render(modulerizr, currentPath, content);
-                const $ = cheerio.load(content);
-                if ($('[data-render-comp]').length == 0)
-                    allComponentsRendered = true;
+                while (!allComponentsRendered) {
+                    content = render(modulerizr, currentPath, content);
+                    const $ = cheerio.load(content);
+                    if ($('[data-render-comp]').length == 0)
+                        allComponentsRendered = true;
 
-                if (level >= modulerizr.config.maxRecursionLevel) {
-                    throw new Error('There is a Problem with infinite recursion in nested Elements. Sth like Component "A" includes Component "B"  and Component "B" includes Component "A". This leads to an infinite loop. Please fix this.');
+                    if (level >= modulerizr.config.maxRecursionLevel) {
+                        throw new Error('There is a Problem with infinite recursion in nested Elements. Sth like Component "A" includes Component "B"  and Component "B" includes Component "A". This leads to an infinite loop. Please fix this.');
+                    }
+                    level++;
                 }
-                level++;
-            }
-
-        });
+            });
+        })
     }
 }
 

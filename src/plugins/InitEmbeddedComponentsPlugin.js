@@ -3,13 +3,19 @@ const crypto = require('crypto');
 
 class InitEmbeddedComponentsPlugin {
     constructor(pluginconfig = {}) {
-        this.pluginType = "initial";
         this.name = 'Modulerizr-InitEmbeddedComponentsPlugin';
         this.internal = true;
     }
     async apply(modulerizr) {
-        return modulerizr.store.each('$["src","component"].*', (currentFile, currentPath, i) => {
-            return addEmbeddedComponents(modulerizr, currentFile, currentPath, i);
+        modulerizr.plugins.on('init', async() => {
+            console.log('start init initembeddedcomponentsplugin');
+
+            await modulerizr.store.each('$["src","component"].*', (currentFile, currentPath, i) => {
+                return addEmbeddedComponents(modulerizr, currentFile, currentPath, i);
+            })
+
+            console.log('ende init initembeddedcomponentsplugin');
+            return;
         })
     }
 }

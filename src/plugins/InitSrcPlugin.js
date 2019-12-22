@@ -7,7 +7,6 @@ const foreachPromise = require('../lib/foreachPromise');
 
 class InitSrcPlugin {
     constructor(pluginconfig = {}) {
-        this.pluginType = "initial";
         this.name = 'Modulerizr-InitSrcPlugin';
         this.internal = true;
     }
@@ -15,22 +14,28 @@ class InitSrcPlugin {
         if (modulerizr.config.src == undefined)
             throw new Error('Error in your modulerizr.config: "src" is undefined but required.', 'red');
 
-        const srcFiles = await globFiles(ensureArray(modulerizr.config.src), modulerizr.config._rootPath);
-        logFoundFiles(srcFiles, modulerizr);
+        modulerizr.plugins.on('init', async() => {
+            console.log('start init initsrcplugin');
+            const srcFiles = await globFiles(ensureArray(modulerizr.config.src), modulerizr.config._rootPath);
+            logFoundFiles(srcFiles, modulerizr);
 
-        return foreachPromise(srcFiles, async filePath => {
-            const content = await fs.readFile(filePath, "UTF-8")
+            await foreachPromise(srcFiles, async filePath => {
+                const content = await fs.readFile(filePath, "UTF-8")
 
-            const retObj = {
-                content,
-                original: content,
-                path: filePath,
-                key: filePath,
-                id: crypto.createHash('md5').update(content).digest("hex").substring(0, 8)
-            };
+                const retObj = {
+                    content,
+                    original: content,
+                    path: filePath,
+                    key: filePath,
+                    id: crypto.createHash('md5').update(content).digest("hex").substring(0, 8)
+                };
 
-            modulerizr.store.value(`$.src.id_${retObj.id}`, retObj);
-            return retObj;
+                modulerizr.store.value(`$.src.id_${retObj.id}`, retObj);
+                return retObj;
+            });
+            console.log('ende init initsrcplugin');
+
+            return;
         })
     }
 }

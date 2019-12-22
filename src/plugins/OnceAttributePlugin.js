@@ -4,35 +4,35 @@ const crypto = require('crypto');
 class OnceAttributePlugin {
     constructor(pluginconfig = {}) {
         this.onceAttributeName = pluginconfig.onceAttributeName || 'm-once';
-
-        this.pluginType = "afterRender";
         this.name = 'Modulerizr-OnceAttributePlugin';
         this.internal = true;
     }
     apply(modulerizr) {
-        return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
-            const onceAttributes = {};
-            const $ = cheerio.load(currentFile.content);
+        modulerizr.plugins.on('afterRender', async() => {
+            return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
+                const onceAttributes = {};
+                const $ = cheerio.load(currentFile.content);
 
-            logIfExternalScriptWithoutOnceFound(modulerizr, $, this.onceAttributeName);
+                logIfExternalScriptWithoutOnceFound(modulerizr, $, this.onceAttributeName);
 
-            //identical style Tags are automatically rendered once
-            $('style').attr(this.onceAttributeName, "");
+                //identical style Tags are automatically rendered once
+                $('style').attr(this.onceAttributeName, "");
 
-            const $onceAttributes = $(`[${this.onceAttributeName}]`);
-            $onceAttributes.each((i, e) => {
-                const $currentOnceAttribute = $(e);
-                const htmlToValidate = $.html($currentOnceAttribute).replace(/\s/g, "");
+                const $onceAttributes = $(`[${this.onceAttributeName}]`);
+                $onceAttributes.each((i, e) => {
+                    const $currentOnceAttribute = $(e);
+                    const htmlToValidate = $.html($currentOnceAttribute).replace(/\s/g, "");
 
-                const elementHash = crypto.createHash('md5').update(htmlToValidate).digest("hex").substring(0, 16);
-                if (onceAttributes[elementHash] != null) {
-                    $currentOnceAttribute.replaceWith('<!-- Here was a component with attribute "m-once", which also exists above. -->');
-                    return;
-                }
-                onceAttributes[elementHash] = true;
+                    const elementHash = crypto.createHash('md5').update(htmlToValidate).digest("hex").substring(0, 16);
+                    if (onceAttributes[elementHash] != null) {
+                        $currentOnceAttribute.replaceWith('<!-- Here was a component with attribute "m-once", which also exists above. -->');
+                        return;
+                    }
+                    onceAttributes[elementHash] = true;
+                });
+                $onceAttributes.removeAttr(this.onceAttributeName);
+                modulerizr.store.value(`${currentPath}.content`, $.html($(':root')));
             });
-            $onceAttributes.removeAttr(this.onceAttributeName);
-            modulerizr.store.value(`${currentPath}.content`, $.html($(':root')));
         });
     }
 }

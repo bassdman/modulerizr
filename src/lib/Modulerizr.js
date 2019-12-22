@@ -1,5 +1,8 @@
 const colors = require('colors/safe');
 const jp = require('jsonpath');
+const { SynchronousEventEmitter } = require('./EventEmitter');
+
+
 const foreachPromise = require('./foreachPromise');
 
 function Modulerizr(config) {
@@ -19,6 +22,7 @@ function Modulerizr(config) {
 
         },
         config,
+        plugins: new SynchronousEventEmitter(),
         store: {
             query(query, count) {
                 if (query == null)

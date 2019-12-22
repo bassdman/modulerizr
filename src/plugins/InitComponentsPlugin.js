@@ -8,7 +8,6 @@ const foreachPromise = require('../lib/foreachPromise');
 
 class InitComponentsPlugin {
     constructor(pluginconfig = {}) {
-        this.pluginType = "initial";
         this.name = 'Modulerizr-InitComponentsPlugin';
         this.internal = true;
     }
@@ -16,36 +15,41 @@ class InitComponentsPlugin {
         if (modulerizr.config.components == undefined)
             throw new Error('Error in your modulerizr.config: "src" is undefined but required.', 'red');
 
-        const componentFiles = await globFiles(ensureArray(modulerizr.config.components), modulerizr.config._rootPath);
-        logFoundFiles(componentFiles, modulerizr);
+        modulerizr.plugins.on('init', async() => {
+            console.log('start init initcomponentplugin');
 
-        return foreachPromise(componentFiles, async fileName => {
-            const fileContent = await fs.readFile(fileName, "UTF-8");
-            const $ = cheerio.load(fileContent);
-            const $template = $('template');
+            const componentFiles = await globFiles(ensureArray(modulerizr.config.components), modulerizr.config._rootPath);
+            logFoundFiles(componentFiles, modulerizr);
 
-            const retVal = Object.assign({
-                id: crypto.createHash('md5').update(fileContent).digest("hex").substring(0, 8),
-                params: {},
-                key: fileName,
-                content: $template.html(),
-                original: $.html($template),
-                name: $template.attr('name')
-            }, $template.attributes);
+            return foreachPromise(componentFiles, async fileName => {
+                const fileContent = await fs.readFile(fileName, "UTF-8");
+                const $ = cheerio.load(fileContent);
+                const $template = $('template');
 
-            const attributes = $template.get(0).attribs;
+                const retVal = Object.assign({
+                    id: crypto.createHash('md5').update(fileContent).digest("hex").substring(0, 8),
+                    params: {},
+                    key: fileName,
+                    content: $template.html(),
+                    original: $.html($template),
+                    name: $template.attr('name')
+                }, $template.attributes);
 
-            Object.keys(attributes).forEach(attributeName => {
-                if (attributeName.startsWith(':')) {
-                    retVal.params[attributeName.replace(':', '')] = attributes[attributeName];
-                    delete retVal[attributeName];
-                }
+                const attributes = $template.get(0).attribs;
+
+                Object.keys(attributes).forEach(attributeName => {
+                    if (attributeName.startsWith(':')) {
+                        retVal.params[attributeName.replace(':', '')] = attributes[attributeName];
+                        delete retVal[attributeName];
+                    }
+                })
+
+                modulerizr.store.value(`$.component.id_${retVal.id}`, retVal)
+
+                return retVal;
             })
-
-            modulerizr.store.value(`$.component.id_${retVal.id}`, retVal)
-
-            return retVal;
-        })
+            console.log('ende init initcomponentplugin');
+        });
     }
 }
 

@@ -9,25 +9,37 @@ class DebugPlugin {
         this.config = pluginconfig;
     }
     async apply(modulerizr) {
-        modulerizr.config.plugins.push(new createDebugFilePlugin());
+        modulerizr.plugins.on('init', async() => {
+            console.log('start init debugplugin');
+            if (!this.config.ignorePlugins) {
+                console.log('No Plugins are ignored (use debugPlugin({ignorePlugins:["Name-ofPlugin"]}) to ignore Plugins)');
+            }
+            if (this.config.ignorePlugins) {
+                let ignorePlugins = this.config.ignorePlugins;
+                if (!Array.isArray(ignorePlugins))
+                    ignorePlugins = [ignorePlugins];
 
-        if (!this.config.ignorePlugins) {
-            console.log('No Plugins are ignored (use debugPlugin({ignorePlugins:["Name-ofPlugin"]}) to ignore Plugins)');
-        }
-        if (this.config.ignorePlugins) {
-            let ignorePlugins = this.config.ignorePlugins;
-            if (!Array.isArray(ignorePlugins))
-                ignorePlugins = [ignorePlugins];
+                modulerizr.config.plugins = modulerizr.config.plugins.map(plugin => {
+                    if (ignorePlugins.includes(plugin.name)) {
+                        plugin.ignore = true;
+                        plugin.log = 'Plugin "#name" won\'t be executed - it is ignored by the DebugPlugin.';
+                        plugin.logColor = "red";
+                    }
+                    return plugin;
+                })
+            }
+            console.log('ende init debugplugin');
+        });
 
-            modulerizr.config.plugins = modulerizr.config.plugins.map(plugin => {
-                if (ignorePlugins.includes(plugin.name)) {
-                    plugin.ignore = true;
-                    plugin.log = 'Plugin "#name" won\'t be executed - it is ignored by the DebugPlugin.';
-                    plugin.logColor = "red";
-                }
-                return plugin;
-            })
-        }
+        modulerizr.plugins.on('deploy', async() => {
+            console.log('start deploy debugplugin');
+            await fs.writeFile(path.join(modulerizr.config.dest, 'modulerizr-debug.config.json'), JSON.stringify({ config: modulerizr.config, store: modulerizr.store.queryOne('$') }, null, 1));
+            console.log('ende deploy debugplugin');
+            return;
+        });
+
+
+
     }
 }
 
@@ -37,9 +49,7 @@ class createDebugFilePlugin {
         this.name = 'Modulerizr-CreateDebugFilePlugin';
         this.internal = true;
     }
-    async apply(modulerizr) {
-        return await fs.writeFile(path.join(modulerizr.config.dest, 'modulerizr-debug.config.json'), JSON.stringify({ config: modulerizr.config, store: modulerizr.store.queryOne('$') }, null, 1));
-    }
+    async apply(modulerizr) {}
 }
 
 exports.DebugPlugin = DebugPlugin;
