@@ -84,18 +84,17 @@ function Modulerizr(config) {
     }
 
     modulerizr.plugins = new SynchronousEventEmitter({
-        beforeEmit(eventname, event) {
-            // Desactivtes a plugin if 
+        async beforeEmit(eventname, event) {
             if (modulerizr.store.queryOne(`$.plugins.${event.currentPlugin.constructor.name}.isactive`) === false)
                 return false;
             if (modulerizr.store.queryOne(`$.plugins.${event.currentPlugin.constructor.name}.${eventname}.isactive`) === false)
                 return false;
 
+            await modulerizr.plugins.emit(`${event.currentPlugin.constructor.name }_before`);
             modulerizr.log(`Execute "${eventname}"-event of plugin "${event.currentPlugin.constructor.name  }".`, 'blue');
-            modulerizr.plugins.emit(`${event.currentPlugin.constructor.name }_start`);
         },
-        afterEmit(eventname, result, event) {
-            modulerizr.plugins.emit(`${event.currentPlugin.constructor.name }_finished`);
+        async afterEmit(eventname, result, event) {
+            await modulerizr.plugins.emit(`${event.currentPlugin.constructor.name }_after`);
         },
         beforeOn(eventname, fn) {
             fn.currentPlugin = modulerizr.store.queryOne('$.plugins._current');
