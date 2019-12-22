@@ -27,13 +27,13 @@ function Modulerizr(config) {
                 if (query == null)
                     throw new Error('Modulerizr.store.query(query[,count]): query is undefined');
 
-                return jp.query(store, query, count);
+                return jp.query(store, query.toLowerCase(), count);
             },
             queryOne(query, count) {
                 if (query == null)
                     throw new Error('Modulerizr.store.query(query[,count]): query is undefined');
 
-                return jp.query(store, query, count)[0];
+                return jp.query(store, query.toLowerCase(), count)[0];
             },
             apply(query, fn) {
                 if (query == null)
@@ -42,37 +42,37 @@ function Modulerizr(config) {
                 if (fn == null)
                     throw new Error('Modulerizr.store.apply(query,fn): fn is undefined');
 
-                jp.apply(store, query, fn);
+                jp.apply(store, query.toLowerCase(), fn);
             },
             value(query, value) {
                 if (query == null)
                     throw new Error('Modulerizr.store.value(query): query is undefined');
 
-                jp.value(store, query, value);
+                jp.value(store, query.toLowerCase(), value);
             },
             paths(query, count) {
                 if (query == null)
                     throw new Error('Modulerizr.store.paths(query[,count]): query is undefined');
 
-                return jp.paths(store, query, count);
+                return jp.paths(store, query.toLowerCase(), count);
             },
             nodes(query, count) {
                 if (query == null)
                     throw new Error('Modulerizr.store.nodes(query[,count]): query is undefined');
 
-                return jp.nodes(store, query, count);
+                return jp.nodes(store, query.toLowerCase(), count);
             },
             parent(query) {
                 if (query == null)
                     throw new Error('Modulerizr.store.parent(query): query is undefined');
 
-                return jp.parent(store, query, count);
+                return jp.parent(store, query.toLowerCase(), count);
             },
             each(query, fn) {
                 if (query == null)
                     throw new Error('Modulerizr.store.parent(query): query is undefined');
 
-                const nodes = jp.nodes(store, query) || [];
+                const nodes = jp.nodes(store, query.toLowerCase()) || [];
 
                 return foreachPromise(nodes, (node, i) => {
                     const _path = node.path.join('.');
@@ -85,13 +85,27 @@ function Modulerizr(config) {
 
     modulerizr.plugins = new SynchronousEventEmitter({
         beforeEmit(eventname, event) {
+            // Desactivtes a plugin if 
+            if (modulerizr.store.queryOne(`$.plugins.${event.currentPlugin.constructor.name}.isactive`) === false)
+                return false;
+            if (modulerizr.store.queryOne(`$.plugins.${event.currentPlugin.constructor.name}.${eventname}.isactive`) === false)
+                return false;
 
-            modulerizr.log(colors.green(`Run ${eventname}-event of plugin "${event.currentPlugin.constructor.name  }".`));
+            modulerizr.log(`Run "${eventname}"-event of plugin "${event.currentPlugin.constructor.name  }".`, 'blue');
         },
         beforeOn(eventname, fn) {
-            fn.currentPlugin = modulerizr.store.queryOne('$.plugins.current');
+            fn.currentPlugin = modulerizr.store.queryOne('$.plugins._current');
         }
     });
+    modulerizr.plugins.ignore = function(pluginname, eventname) {
+        if (pluginname == null)
+            throw new Error('modulerizr.plugins.ignore(pluginname,eventname): pluginname is undefined but required.');
+
+        if (eventname == undefined)
+            modulerizr.store.value(`$.plugins.${pluginname}.isactive`, false);
+        else
+            modulerizr.store.queryOne(`$.plugins.${pluginname}.${eventname}.isactive`, false);
+    }
 
     return modulerizr;
 }

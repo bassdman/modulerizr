@@ -28,8 +28,10 @@ class SynchronousEventEmitter {
         return await foreachPromise(plugins, async plugin => {
             const args = Array.from(arguments).slice(1, arguments.length);
 
-            if (this.beforeEmit)
-                await this.beforeEmit(eventname, plugin);
+            let beforeEmitResult = this.beforeEmit ? await this.beforeEmit(eventname, plugin) : undefined;
+
+            if (beforeEmitResult === false)
+                return;
 
             const result = await plugin.apply(this, args);
 

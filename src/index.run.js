@@ -10,7 +10,7 @@ async function run(_config) {
 
     await foreachPromise(config, conf => runOne(conf));
 
-    console.log(color.green('Modulerizr finished.'));
+    console.log(color.blue('Modulerizr finished.'));
 }
 
 async function runOne(_config) {
@@ -20,7 +20,6 @@ async function runOne(_config) {
     const modulerizr = new Modulerizr(config);
 
     modulerizr.log(`\nThe rootPath is: ${config._rootPath}`);
-    modulerizr.log(`\nApplyPlugins:`);
 
     await initializePlugins(modulerizr);
 
@@ -35,12 +34,7 @@ async function initializePlugins(modulerizr) {
     const plugins = modulerizr.config.plugins;
 
     await foreachPromise(plugins, async plugin => {
-        const internalText = plugin.internal ? "(Internal)" : "";
-
-        if (plugin.ignore) {
-            return;
-        }
-        modulerizr.store.value('$.plugins.current', plugin);
+        modulerizr.store.value('$.plugins._current', plugin);
 
         return Promise.resolve(plugin.apply(modulerizr))
     });
