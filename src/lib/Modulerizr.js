@@ -76,10 +76,10 @@ function Modulerizr(config) {
 
                 const nodes = jp.nodes(store, query.toLowerCase()) || [];
 
-                return foreachPromise(nodes, (node, i) => {
+                return foreachPromise(nodes, async(node, i) => {
                     const _path = node.path.join('.');
 
-                    return fn(node.value, _path, i);
+                    await fn(node.value, _path, i);
                 })
             },
             $each(query, fn) {

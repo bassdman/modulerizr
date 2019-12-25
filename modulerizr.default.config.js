@@ -6,6 +6,7 @@ const { WriteDestFilesPlugin } = require("./src/plugins/WriteDestFilesPlugin");
 const { ScopeStylesPlugin } = require("./src/plugins/ScopeStylesPlugin");
 const { ScopeScriptsPlugin } = require("./src/plugins/ScopeScriptsPlugin");
 const { OnceAttributePlugin } = require("./src/plugins/OnceAttributePlugin");
+const { PrerenderScriptPlugin } = require("./src/plugins/PrerenderScriptPlugin");
 
 module.exports = {
     dest: "dest",
@@ -19,6 +20,7 @@ module.exports = {
         new ScopeScriptsPlugin(),
         new PreRenderPlugin(),
         new OnceAttributePlugin(),
-        new WriteDestFilesPlugin()
+        new WriteDestFilesPlugin(),
+        new PrerenderScriptPlugin()
     ]
 }

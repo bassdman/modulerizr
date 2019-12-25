@@ -1,0 +1,22 @@
+<template name="jsrender-template-prerenderscript">
+    <div>
+        <h1>His name is {{:name}}</h1>
+
+        His kids are called
+        <ul>
+            {{for kids}}
+            <li>{{>name}}</li>
+            {{/for}}
+        </ul>
+    </div>
+    <script m-prerenderscript>
+        module.exports = {
+            data(){
+                return {
+                    name: "dieter",
+                    kids: [{name:'heinz'},{name:'gustav'}]
+                }
+            }
+        }
+    </script>
+</template>

@@ -42,6 +42,8 @@ class SynchronousEventEmitter {
 
             if (this.afterEmit)
                 await this.afterEmit(eventname, result, plugin);
+
+            return;
         });
     }
 }

@@ -8,6 +8,6 @@ module.exports = {
     "debug": true,
     "plugins": [
         new DebugPlugin(),
-        new ModulerizrJsRenderPlugin()
+        new ModulerizrJsRenderPlugin({ allowCode: true })
     ]
 }
