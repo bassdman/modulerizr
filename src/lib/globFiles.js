@@ -1,5 +1,5 @@
 const glob = require('glob');
-const foreachPromise = require('./foreachPromise');
+const { foreachPromise } = require('./utils');
 
 function globFiles(src, rootPath) {
     const files = [];

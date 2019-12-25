@@ -4,7 +4,7 @@ const crypto = require('crypto');
 
 const { globFiles } = require("../lib/globFiles");
 const { ensureArray } = require('../lib/utils');
-const foreachPromise = require('../lib/foreachPromise');
+const { foreachPromise } = require('../lib/utils');
 
 class InitComponentsPlugin {
     constructor(pluginconfig = {}) {

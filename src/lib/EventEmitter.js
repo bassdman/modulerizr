@@ -1,4 +1,4 @@
-const foreachPromise = require('./foreachPromise');
+const { foreachPromise } = require('./utils');
 
 class SynchronousEventEmitter {
     constructor(config = {}) {

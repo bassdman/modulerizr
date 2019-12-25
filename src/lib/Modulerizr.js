@@ -5,7 +5,7 @@ const cheerio = require('cheerio');
 const { SynchronousEventEmitter } = require('./EventEmitter');
 
 
-const foreachPromise = require('./foreachPromise');
+const { foreachPromise } = require('./utils');
 
 function Modulerizr(config) {
     const store = {};

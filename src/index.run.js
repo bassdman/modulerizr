@@ -1,4 +1,4 @@
-const foreachPromise = require('./lib/foreachPromise');
+const { foreachPromise } = require('./lib/utils');
 const { Modulerizr } = require('./lib/Modulerizr');
 const color = require('colors');
 
