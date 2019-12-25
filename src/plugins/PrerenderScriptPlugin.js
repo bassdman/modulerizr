@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const crypto = require('crypto');
 
-const { foreachPromise } = require('../lib/utils');
+const { foreachPromise } = require('../utils');
 
 
 class PrerenderScriptPlugin {

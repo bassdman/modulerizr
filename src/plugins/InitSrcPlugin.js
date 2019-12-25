@@ -1,9 +1,7 @@
 const fs = require('fs-extra');
 const crypto = require('crypto');
 
-const { globFiles } = require("../lib/globFiles");
-const { ensureArray } = require('../lib/utils');
-const { foreachPromise } = require('../lib/utils');
+const { ensureArray, globFiles, foreachPromise } = require('../utils');
 
 class InitSrcPlugin {
     constructor(pluginconfig = {}) {

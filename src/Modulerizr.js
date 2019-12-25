@@ -2,10 +2,7 @@ const colors = require('colors/safe');
 const jp = require('jsonpath');
 const cheerio = require('cheerio');
 
-const { SynchronousEventEmitter } = require('./EventEmitter');
-
-
-const { foreachPromise } = require('./utils');
+const { foreachPromise, SynchronousEventEmitter } = require('./utils');
 
 function Modulerizr(config) {
     const store = {};

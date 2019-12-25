@@ -1,5 +1,5 @@
-const { foreachPromise } = require('./lib/utils');
-const { Modulerizr } = require('./lib/Modulerizr');
+const { foreachPromise } = require('./utils');
+const { Modulerizr } = require('./Modulerizr');
 const color = require('colors');
 
 async function run(_config) {
