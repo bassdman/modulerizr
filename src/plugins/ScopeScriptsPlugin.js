@@ -11,12 +11,12 @@ class ScopeScriptsPlugin {
                     const $currentScripts = $(e);
 
                     const scopedScript = `(function(window){
-                        var $m = {
-                            id: '${currentFile.id}',
-                            name: '${currentFile.name}',
-                            $el: document.getElementById('${currentFile.id}'),
-                            params: ##el.params##,
-                            slots: ##el.slots##
+                        var _m = {
+                            id: "${currentFile.id}",
+                            name: "${currentFile.name}",
+                            $el: document.getElementById("${currentFile.id}"),
+                            attributes: ##component.attributes##,
+                            slots: ##component.slots##
                         };
                         ${$currentScripts.html()}
                     })(window);`;
@@ -29,12 +29,16 @@ class ScopeScriptsPlugin {
             modulerizr.store.$each('$.src.*', ($, currentFile, currentPath) => {
                 const $scriptTags = $(`script[${this.scopedAttributeName}]`);
                 $scriptTags.each((i, e) => {
-                    const $currentScripts = $(e);
+                    const $currentScript = $(e);
+                    const embeddedComponentId = $currentScript.parent('[data-component-instance]').attr('data-component-instance');
+                    const embeddedComponent = modulerizr.store.queryOne(`$.embeddedComponents.id_${embeddedComponentId}`);
 
-                    console.log($currentScripts);
+                    const replacedScript = $currentScript.html()
+                        .replace('##component.attributes##', JSON.stringify(embeddedComponent.attributes))
+                        .replace('##component.slots##', JSON.stringify(embeddedComponent.slots));
 
+                    $currentScript.html(replacedScript);
                 });
-                return;
             })
         })
 

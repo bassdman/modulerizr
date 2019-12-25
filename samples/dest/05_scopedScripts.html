@@ -16,12 +16,17 @@
       <div data-v-f297c2fb>This is a random element just to show, that scripts can stay in a component with other html tags.</div>
       <script>
         (function(window) {
-          var $m = {
-            id: 'f297c2fb',
-            name: 'scoped-scripts',
-            $el: document.getElementById('f297c2fb'),
-            params: ##el.params##,
-            slots: ##el.slots##
+          var _m = {
+            id: "f297c2fb",
+            name: "scoped-scripts",
+            $el: document.getElementById("f297c2fb"),
+            attributes: {
+              ":param1": "param1",
+              ":param2": "param2"
+            },
+            slots: {
+              "_default": ""
+            }
           };
 
           //a private variable - not accessible outside this scriptblock
