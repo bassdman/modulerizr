@@ -1,17 +1,13 @@
 const { DebugPlugin } = require("modulerizr");
+const { ModulerizrJsRenderPlugin } = require("modulerizr-jsrender-plugin");
 
 module.exports = {
     "src": ["sample**/0*.html"],
     "components": ["**/*.component.html"],
     "dest": "./dest/",
     "debug": true,
-    "plugins": [new DebugPlugin({
-        apply(modulerizr) {
-            /* modulerizr.plugins.on('afterRender', () => {
-                 return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
-
-                 });
-             })*/
-        }
-    })]
+    "plugins": [
+        new DebugPlugin(),
+        new ModulerizrJsRenderPlugin()
+    ]
 }

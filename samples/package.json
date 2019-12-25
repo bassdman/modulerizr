@@ -16,6 +16,7 @@
     "author": "Manuel Gelsen",
     "license": "MIT",
     "dependencies": {
-        "modulerizr": "../"
+        "modulerizr": "../",
+        "modulerizr-jsrender-plugin": "../plugins/modulerizr-jsrender-plugin"
     }
 }

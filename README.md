@@ -1,6 +1,6 @@
 # Modulerizr
 
-> Integrate a component based architecture to your legacy project in just a few steps
+> Integrate a powerful, component based architecture to your legacy project in just a few steps
 
 [![npm version](https://img.shields.io/npm/v/modulerizr.svg)](https://www.npmjs.com/package/modulerizr)
 [![npm downloads](https://img.shields.io/npm/dt/modulerizr.svg)](https://www.npmjs.com/package/modulerizr)
@@ -733,10 +733,17 @@ Would be rendered to
         (function(window){
             // This is added when you use a "scoped"-Attribute. 
             //It gives you important component information in javascript.
-            var $m = {
+            var _m = {
                 id: '12345',
                 name: 'child-component',
-                $el: document.getElementById('12345')
+                $el: document.getElementById('12345'),
+                slots: {
+                    _default: "<script m-scoped>var text = "Hello child";</script>"
+                },
+                attributes: {
+                    "attributeKey1": "attributeValue1"
+                    ...
+                }
             };
 
             var text = "Hello child";
