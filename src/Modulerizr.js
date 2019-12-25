@@ -79,9 +79,12 @@ function Modulerizr(config) {
                     await fn(node.value, _path, i);
                 })
             },
-            $each(query, fn) {
-                if (query == null)
+            $each(_query, fn) {
+                if (_query == null)
                     throw new Error('Modulerizr.store.parent(query): query is undefined');
+
+                const query = _query.split('/')[0];
+                const selector = _query.split('/').length > 1 ? _query.split('/')[1] : undefined;
 
                 const nodes = jp.nodes(store, query.toLowerCase()) || [];
 
@@ -89,7 +92,17 @@ function Modulerizr(config) {
                     const _path = node.path.join('.');
                     const $el = node.value.content ? cheerio.load(node.value.content) : undefined;
 
-                    await fn($el, node.value, _path, i);
+                    if (selector == null) {
+                        await fn($el, node.value, _path, i);
+                    } else {
+                        const $tags = $el(selector);
+
+                        await foreachPromise($tags, async e => {
+                            const $currentTag = $el(e);
+                            await fn($currentTag, $el, _path, i);
+                        });
+
+                    }
 
                     if ($el !== undefined) {
                         this.value(`${_path}.content`, $el.html(':root'))

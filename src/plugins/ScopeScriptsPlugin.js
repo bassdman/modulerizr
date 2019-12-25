@@ -26,20 +26,16 @@ class ScopeScriptsPlugin {
         });
 
         modulerizr.plugins.on('afterRender', async() => {
-            modulerizr.store.$each('$.src.*', ($, currentFile, currentPath) => {
-                const $scriptTags = $(`script[${this.scopedAttributeName}]`);
-                $scriptTags.each((i, e) => {
-                    const $currentScript = $(e);
-                    const embeddedComponentId = $currentScript.parent('[data-component-instance]').attr('data-component-instance');
-                    const embeddedComponent = modulerizr.store.queryOne(`$.embeddedComponents.id_${embeddedComponentId}`);
+            modulerizr.store.$each(`$.src.*/script[${this.scopedAttributeName}]`, ($, currentFile, currentPath) => {
+                const embeddedComponentId = $.parent('[data-component-instance]').attr('data-component-instance');
+                const embeddedComponent = modulerizr.store.queryOne(`$.embeddedComponents.id_${embeddedComponentId}`);
 
-                    const replacedScript = $currentScript.html()
-                        .replace('##component.attributes##', JSON.stringify(embeddedComponent.attributes))
-                        .replace('##component.slots##', JSON.stringify(embeddedComponent.slots));
+                const replacedScript = $.html()
+                    .replace('##component.attributes##', JSON.stringify(embeddedComponent.attributes))
+                    .replace('##component.slots##', JSON.stringify(embeddedComponent.slots));
 
-                    $currentScript.html(replacedScript);
-                });
-            })
+                $.html(replacedScript);
+            });
         })
 
         modulerizr.plugins.on('finish', () => {
