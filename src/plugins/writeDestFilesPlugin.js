@@ -9,7 +9,7 @@ class WriteDestFilesPlugin {
     async apply(modulerizr) {
         const destpath = modulerizr.config.dest;
 
-        modulerizr.plugins.on('deploy', async() => {
+        modulerizr.plugins.on('finish', async() => {
             modulerizr.store.each('$.src.*', async(currentFile, currentPath, i) => {
                 const filePath = path.join(destpath, removeLeadSubfoldersFromPath(modulerizr.config.src, currentFile.path));
                 const fileContent = pretty(currentFile.content);

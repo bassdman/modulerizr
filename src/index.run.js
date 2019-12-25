@@ -27,7 +27,7 @@ async function runOne(_config) {
     await modulerizr.plugins.emit('ready');
     await modulerizr.plugins.emit('render');
     await modulerizr.plugins.emit('afterRender');
-    await modulerizr.plugins.emit('deploy');
+    await modulerizr.plugins.emit('finish');
 }
 
 async function initializePlugins(modulerizr) {

@@ -21,11 +21,28 @@ class ScopeScriptsPlugin {
                         ${$currentScripts.html()}
                     })(window);`;
                     $currentScripts.html(scopedScript);
-                    $currentScripts.removeAttr(this.scopedAttributeName)
+                });
+            })
+        });
+
+        modulerizr.plugins.on('afterRender', async() => {
+            modulerizr.store.$each('$.src.*', ($, currentFile, currentPath) => {
+                const $scriptTags = $(`script[${this.scopedAttributeName}]`);
+                $scriptTags.each((i, e) => {
+                    const $currentScripts = $(e);
+
+                    console.log($currentScripts);
+
                 });
                 return;
             })
-        });
+        })
+
+        modulerizr.plugins.on('finish', () => {
+            return modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
+                $(`[${this.scopedAttributeName}]`).removeAttr(this.scopedAttributeName);
+            });
+        })
     }
 }
 

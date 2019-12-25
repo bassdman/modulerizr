@@ -25,11 +25,11 @@ class PreRenderPlugin {
             });
         });
 
-        /*modulerizr.plugins.on('afterRender',() => {
-            return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
-                
+        modulerizr.plugins.on('finish', () => {
+            return modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
+                $(`[data-component-instance]`).removeAttr('data-component-instance');
             });
-        })*/
+        })
     }
 }
 
@@ -49,7 +49,7 @@ function render(modulerizr, currentPath, content) {
                 .attr("data-v-" + componentElemConfig.componentId, "")
                 .attr("id", componentElemConfig.componentId)
                 .attr("data-component", componentElemConfig.tag)
-                //         .attr("data-component-instance", componentId)
+                .attr("data-component-instance", componentId)
         }
 
         const componentConfig = modulerizr.store.queryOne(`$.component.id_${componentElemConfig.componentId}`);
