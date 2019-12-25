@@ -1,4 +1,3 @@
-const cheerio = require('cheerio');
 const crypto = require('crypto');
 
 class OnceAttributePlugin {
@@ -8,9 +7,8 @@ class OnceAttributePlugin {
     }
     apply(modulerizr) {
         modulerizr.plugins.on('afterRender', async() => {
-            return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
+            return modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
                 const onceAttributes = {};
-                const $ = cheerio.load(currentFile.content);
 
                 logIfExternalScriptWithoutOnceFound(modulerizr, $, this.onceAttributeName);
 
@@ -30,7 +28,6 @@ class OnceAttributePlugin {
                     onceAttributes[elementHash] = true;
                 });
                 $onceAttributes.removeAttr(this.onceAttributeName);
-                modulerizr.store.value(`${currentPath}.content`, $.html($(':root')));
             });
         });
     }

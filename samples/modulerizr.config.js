@@ -5,5 +5,13 @@ module.exports = {
     "components": ["**/*.component.html"],
     "dest": "./dest/",
     "debug": true,
-    "plugins": [new DebugPlugin()]
+    "plugins": [new DebugPlugin({
+        apply(modulerizr) {
+            /* modulerizr.plugins.on('afterRender', () => {
+                 return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
+
+                 });
+             })*/
+        }
+    })]
 }

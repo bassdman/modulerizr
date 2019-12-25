@@ -6,7 +6,7 @@ class PreRenderPlugin {
     }
     apply(modulerizr) {
         modulerizr.plugins.on('render', async() => {
-            return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
+            modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
                 let allComponentsRendered = false;
                 let level = 1;
                 let content = currentFile.content;
@@ -23,7 +23,13 @@ class PreRenderPlugin {
                     level++;
                 }
             });
-        })
+        });
+
+        /*modulerizr.plugins.on('afterRender',() => {
+            return modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
+                
+            });
+        })*/
     }
 }
 
@@ -43,6 +49,7 @@ function render(modulerizr, currentPath, content) {
                 .attr("data-v-" + componentElemConfig.componentId, "")
                 .attr("id", componentElemConfig.componentId)
                 .attr("data-component", componentElemConfig.tag)
+                //         .attr("data-component-instance", componentId)
         }
 
         const componentConfig = modulerizr.store.queryOne(`$.component.id_${componentElemConfig.componentId}`);

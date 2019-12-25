@@ -8,8 +8,7 @@ class ScopeStylesPlugin {
     }
     apply(modulerizr) {
         modulerizr.plugins.on('ready', async() => {
-            return modulerizr.store.each("$.component.*", (currentFile, currentPath, i) => {
-                const $ = cheerio.load(currentFile.content);
+            return modulerizr.store.$each("$.component.*", ($, currentFile, currentPath, i) => {
                 $('*').not('style,script').attr('data-v-' + currentFile.id, "")
 
                 const $styleTags = $(`style[${this.scopedAttributeName}]`);
@@ -26,7 +25,6 @@ class ScopeStylesPlugin {
                 });
                 $styleTags.removeAttr(this.scopedAttributeName);
 
-                modulerizr.store.value(`${currentPath}.content`, $.html(':root'));
                 return;
             })
         });

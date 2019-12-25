@@ -1,5 +1,7 @@
 const colors = require('colors/safe');
 const jp = require('jsonpath');
+const cheerio = require('cheerio');
+
 const { SynchronousEventEmitter } = require('./EventEmitter');
 
 
@@ -78,6 +80,23 @@ function Modulerizr(config) {
                     const _path = node.path.join('.');
 
                     return fn(node.value, _path, i);
+                })
+            },
+            $each(query, fn) {
+                if (query == null)
+                    throw new Error('Modulerizr.store.parent(query): query is undefined');
+
+                const nodes = jp.nodes(store, query.toLowerCase()) || [];
+
+                return foreachPromise(nodes, async(node, i) => {
+                    const _path = node.path.join('.');
+                    const $el = node.value.content ? cheerio.load(node.value.content) : undefined;
+
+                    await fn($el, node.value, _path, i);
+
+                    if ($el !== undefined) {
+                        this.value(`${_path}.content`, $el.html(':root'))
+                    }
                 })
             }
         }
