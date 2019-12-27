@@ -1,11 +1,12 @@
 {
     "name": "modulerizr",
-    "version": "1.4.0-beta",
+    "version": "1.4.0-beta2",
     "description": "Integrate a powerful, component based architecture to your legacy project in just a few steps",
     "main": "src/index.js",
     "scripts": {
         "modulerizr": "node bin/index.js",
-        "test": "jasmine"
+        "test": "jasmine",
+        "webpack": "node ./src/index.webpack.js"
     },
     "bin": {
         "modulerizr": "./bin/index.js"
@@ -27,15 +28,17 @@
         "url": "https://github.com/bassdman/modulerizr.git/issues"
     },
     "devDependencies": {
-        "jasmine": "^3.5.0"
-    },
-    "dependencies": {
         "cheerio": "^1.0.0-rc.3",
         "colors": "^1.4.0",
         "css-tree": "^1.0.0-alpha.39",
         "fs-extra": "^7.0.1",
         "glob": "^7.1.6",
+        "html-replace-webpack-plugin": "^2.5.6",
+        "html-webpack-plugin": "^4.0.0-beta.4",
+        "jasmine": "^3.5.0",
         "jsonpath": "^1.0.2",
-        "pretty": "^2.0.0"
+        "pretty": "^2.0.0",
+        "webpack": "^4.41.4",
+        "webpack-log": "^3.0.1"
     }
 }

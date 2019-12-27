@@ -5,8 +5,8 @@ class OnceAttributePlugin {
         this.onceAttributeName = pluginconfig.onceAttributeName || 'm-once';
         this.internal = true;
     }
-    apply(modulerizr) {
-        modulerizr.plugins.on('afterRender', async() => {
+    apply(compiler) {
+        compiler.hooks.modulerizr_afterRender.tapPromise('OnceAttributePlugin', async(modulerizr) => {
             return modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
                 const onceAttributes = {};
 
@@ -43,7 +43,7 @@ function logIfExternalScriptWithoutOnceFound(modulerizr, $, onceAttributeName) {
             return;
 
         alreadyLoggedCache[srcEntry] = true;
-        modulerizr.log(`   Script "${srcEntry}" in component "${$(elem).parent('[data-component]').data('component')}" has not a once-attribute. This means, it is executed each time your component is rendered. Is this your purpose? If yes, add attribute "nolog" to hide these logs.\n`, 'yellow')
+        modulerizr.log(`   Script "${srcEntry}" in component "${$(elem).parent('[data-component]').data('component')}" has not a once-attribute. This means, it is executed each time your component is rendered. Is this your purpose? If yes, add attribute "nolog" to hide these logs.\n`, 'warn')
     });
 
     $externalStylesWithoutOnceAttr.each((i, elem) => {
@@ -53,7 +53,7 @@ function logIfExternalScriptWithoutOnceFound(modulerizr, $, onceAttributeName) {
             return;
 
         alreadyLoggedCache[srcEntry] = true;
-        modulerizr.log(`   Style "${$(elem).attr('href')}" in component "${$(elem).parent('[data-component]').data('component')}" has not a once-attribute. This means, it is executed each time your component is rendered. Is this your purpose? If yes, add attribute "nolog" to hide these logs.\n`, 'yellow')
+        modulerizr.log(`   Style "${$(elem).attr('href')}" in component "${$(elem).parent('[data-component]').data('component')}" has not a once-attribute. This means, it is executed each time your component is rendered. Is this your purpose? If yes, add attribute "nolog" to hide these logs.\n`, 'warn')
     });
 }
 

@@ -7,11 +7,12 @@ class InitSrcPlugin {
     constructor(pluginconfig = {}) {
         this.internal = true;
     }
-    async apply(modulerizr) {
-        if (modulerizr.config.src == undefined)
-            throw new Error('Error in your modulerizr.config: "src" is undefined but required.', 'red');
+    async apply(compiler) {
 
-        modulerizr.plugins.on('init', async() => {
+        compiler.hooks.modulerizr_init.tapPromise('InitSrcPlugin', async(modulerizr) => {
+            if (modulerizr.config.src == undefined)
+                throw new Error('Error in your modulerizr.config: "src" is undefined but required.');
+
             const srcFiles = await globFiles(ensureArray(modulerizr.config.src), modulerizr.config._rootPath);
             logFoundFiles(srcFiles, modulerizr);
 
@@ -35,9 +36,9 @@ class InitSrcPlugin {
 
 function logFoundFiles(fileNames, modulerizr) {
     if (fileNames.length == 0) {
-        modulerizr.log(`Sorry, no src-files found. Modify the attribute "src" in your modulerizr config to match some files.`, 'red');
+        modulerizr.log(`Sorry, no src-files found. Modify the attribute "src" in your modulerizr config to match some files.`, 'error');
     } else {
-        modulerizr.log(`Found the following src-files:`, 'green');
+        modulerizr.log(`Found the following src-files:`);
         fileNames.forEach(file => modulerizr.log(`   - ${file}`));
     }
 }

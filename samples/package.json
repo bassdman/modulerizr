@@ -18,5 +18,8 @@
     "dependencies": {
         "modulerizr": "../",
         "modulerizr-jsrender-plugin": "../plugins/modulerizr-jsrender-plugin"
+    },
+    "devDependencies": {
+        "webpack-log": "^3.0.1"
     }
 }

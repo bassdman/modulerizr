@@ -2,22 +2,30 @@ const colors = require('colors/safe');
 const jp = require('jsonpath');
 const cheerio = require('cheerio');
 
+const getLogger = require('webpack-log');
+
 const { foreachPromise, SynchronousEventEmitter } = require('./utils');
 
 function Modulerizr(config) {
     const store = {};
+    const log = getLogger({
+        name: config.logName || 'modulerizr',
+        level: config.logLevel || 'trace',
+        timestamp: config.logTimeStamp || true
+    });
+
 
     const modulerizr = {
-        log(text, color) {
+        log(message, logLevel = 'debug') {
             if (!config.debug)
                 return;
 
-            if (color) {
-                if (colors[color] == null)
-                    throw new Error(colors.red(`Error in function modulerizr.log(someText,color): Color "${color}" does not exist. Please look in package https://www.npmjs.com/package/colors which colors exist."`))
-                console.log(colors[color](text));
-            } else
-                console.log(text);
+            const availableLogLevels = ['debug', 'warn', 'error', 'info', 'trace'];
+
+            if (!availableLogLevels.includes(logLevel))
+                throw new Error(colors.red(`Error in function modulerizr.log(someText,logLevel): Loglevel "${logLevel}" does not exist. It must be one of the followings: ${availableLogLevels.join(',')}"`))
+
+            log[logLevel](message)
 
         },
         config,

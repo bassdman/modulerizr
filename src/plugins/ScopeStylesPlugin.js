@@ -6,8 +6,8 @@ class ScopeStylesPlugin {
         this.scopedAttributeName = pluginconfig.scopedAttributeName || 'm-scoped';
         this.internal = true;
     }
-    apply(modulerizr) {
-        modulerizr.plugins.on('ready', async() => {
+    apply(compiler) {
+        compiler.hooks.modulerizr_ready.tapPromise('ScopeStylesPlugin', async(modulerizr) => {
             return modulerizr.store.$each("$.component.*", ($, currentFile, currentPath, i) => {
                 $('*').not('style,script').attr('data-v-' + currentFile.id, "")
 
