@@ -1,8 +1,9 @@
 {
-    "name": "modulerizr-example1-rendercomponent",
+    "name": "modulerizr-examples",
     "version": "1.0.0",
     "description": "Render a single component into an html-file",
     "main": "index.js",
+    "private": true,
     "scripts": {
         "beforemodulerizr_1": "npm install",
         "modulerizr_all": "modulerizr run --debug"
