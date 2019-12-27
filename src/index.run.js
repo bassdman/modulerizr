@@ -41,17 +41,26 @@ async function runOne(_config) {
     compiler.hooks.modulerizr_ready = new AsyncSeriesHook(['modulerizr']);
     compiler.hooks.modulerizr_render = new AsyncSeriesHook(['modulerizr']);
     compiler.hooks.modulerizr_afterRender = new AsyncSeriesHook(['modulerizr']);
-    compiler.hooks.modulerizr_finished = new AsyncSeriesHook(['modulerizr']);
+    compiler.hooks.emitModulerizr = new AsyncSeriesHook(['compilation', 'modulerizr']);
+    compiler.hooks.doneModulerizr = new AsyncSeriesHook(['stats', 'modulerizr']);
 
     modulerizr.config.plugins.forEach(plugin => {
         plugin.apply(compiler, modulerizr);
     });
 
+    compiler.hooks.emit.tapPromise('ExecuteModulerizrEmit', async(compilation) => {
+        await compiler.hooks.emitModulerizr.promise(compilation, modulerizr);
+    });
+    compiler.hooks.done.tapPromise('ExecuteModulerizrDone', async(stats) => {
+        await compiler.hooks.doneModulerizr.promise(stats, modulerizr);
+    });
+
+
     await compiler.hooks.modulerizr_init.promise(modulerizr);
     await compiler.hooks.modulerizr_ready.promise(modulerizr);
     await compiler.hooks.modulerizr_render.promise(modulerizr);
     await compiler.hooks.modulerizr_afterRender.promise(modulerizr);
-    await compiler.hooks.modulerizr_finished.promise(modulerizr);
+
 
     return await compiler.run((err, stats) => { // Stats Object
         //console.log(err, stats)

@@ -33,8 +33,8 @@ class PrerenderScriptPlugin {
             });
         })
 
-        compiler.hooks.modulerizr_finished.tapPromise('PrerenderScriptPlugin-cleanup', async(modulerizr) => {
-            modulerizr.store.$each("$.src.*", async($, currentFile, currentPath, i) => {
+        compiler.hooks.doneModulerizr.tapPromise('PrerenderScriptPlugin-cleanup', async(stats, modulerizr) => {
+            return modulerizr.store.$each("$.src.*", async($, currentFile, currentPath, i) => {
                 $(`[${this.serversideAttributeName}]`).remove();
                 await fs.remove('./_temp');
             });

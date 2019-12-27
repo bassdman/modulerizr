@@ -7,7 +7,27 @@ class WriteDestFilesPlugin {
         this.internal = true;
     }
     async apply(compiler) {
-        compiler.hooks.modulerizr_finished.tapPromise('WriteDestFilesPlugin', async(modulerizr) => {
+        compiler.hooks.doneModulerizr.tapPromise('WriteDestFilesPlugin', async(stats, modulerizr) => {
+            /*      const paths = [
+                      './samples/sample-01-hello-world/01_helloworld.html',
+                      './samples/sample-02-custom-wrapper/02_customWrapper.html'
+                  ]
+                  webpackconfig.plugins.push(new HtmlReplaceWebpackPlugin([{
+                      pattern: '<hello-world></hello-world>',
+                      replacement: 'Tag wurde ersetzt'
+                  }, ]));
+
+                  paths.forEach(_path => {
+                      webpackconfig.plugins.push(new HtmlWebpackPlugin({
+                          template: _path,
+                          filename: path.basename(_path),
+                          mode: 'development',
+                          cache: false,
+                          hash: true,
+                          minify: false
+                      }))
+                  })*/
+
             const destpath = modulerizr.config.dest;
 
             modulerizr.store.each('$.src.*', async(currentFile, currentPath, i) => {

@@ -25,7 +25,7 @@ class PreRenderPlugin {
             });
         });
 
-        compiler.hooks.modulerizr_finished.tapPromise('PreRenderPlugin-cleanup', async(modulerizr) => {
+        compiler.hooks.doneModulerizr.tapPromise('PreRenderPlugin-cleanup', async(stats, modulerizr) => {
             return modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
                 $(`[data-component-instance]`).removeAttr('data-component-instance');
             });

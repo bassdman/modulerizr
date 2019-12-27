@@ -38,7 +38,7 @@ class ScopeScriptsPlugin {
             });
         })
 
-        compiler.hooks.modulerizr_finished.tapPromise('ScopeScriptsPlugin-cleanup', async(modulerizr) => {
+        compiler.hooks.doneModulerizr.tapPromise('ScopeScriptsPlugin-cleanup', async(stats, modulerizr) => {
             return modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
                 $(`[${this.scopedAttributeName}]`).removeAttr(this.scopedAttributeName);
             });
