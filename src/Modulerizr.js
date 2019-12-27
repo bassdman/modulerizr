@@ -4,7 +4,7 @@ const cheerio = require('cheerio');
 
 const getLogger = require('webpack-log');
 
-const { foreachPromise, SynchronousEventEmitter } = require('./utils');
+const { foreachPromise } = require('./utils');
 
 function Modulerizr(config) {
     const store = {};
@@ -118,33 +118,6 @@ function Modulerizr(config) {
                 })
             }
         }
-    }
-
-    modulerizr.plugins = new SynchronousEventEmitter({
-        async beforeEmit(eventname, event) {
-            if (modulerizr.store.queryOne(`$.plugins.${event.currentPlugin.constructor.name}.isactive`) === false)
-                return false;
-            if (modulerizr.store.queryOne(`$.plugins.${event.currentPlugin.constructor.name}.${eventname}.isactive`) === false)
-                return false;
-
-            await modulerizr.plugins.emit(`${event.currentPlugin.constructor.name }_before`);
-            modulerizr.log(`Execute "${eventname}"-event of plugin "${event.currentPlugin.constructor.name  }".`, 'blue');
-        },
-        async afterEmit(eventname, result, event) {
-            await modulerizr.plugins.emit(`${event.currentPlugin.constructor.name }_after`);
-        },
-        beforeOn(eventname, fn) {
-            fn.currentPlugin = modulerizr.store.queryOne('$.plugins._current');
-        }
-    });
-    modulerizr.plugins.ignore = function(pluginname, eventname) {
-        if (pluginname == null)
-            throw new Error('modulerizr.plugins.ignore(pluginname,eventname): pluginname is undefined but required.');
-
-        if (eventname == undefined)
-            modulerizr.store.value(`$.plugins.${pluginname}.isactive`, false);
-        else
-            modulerizr.store.queryOne(`$.plugins.${pluginname}.${eventname}.isactive`, false);
     }
 
     return modulerizr;

@@ -13,11 +13,6 @@ class DebugPlugin {
         if (this.config.createDebugFile === false)
             return;
 
-        /*      modulerizr.plugins.on('finish', async() => {
-                  console.log('old way finished');
-                  
-              });*/
-
         compiler.hooks.modulerizr_finished.tapPromise('DebugPlugin-CreateDebugFile', async(modulerizr) => {
             return await fs.writeFile(path.join(modulerizr.config.dest, 'modulerizr-debug.config.json'), JSON.stringify({ config: modulerizr.config, store: modulerizr.store.queryOne('$') }, null, 1));
         });

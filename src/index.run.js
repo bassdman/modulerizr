@@ -53,12 +53,12 @@ async function runOne(_config) {
     await compiler.hooks.modulerizr_afterRender.promise(modulerizr);
     await compiler.hooks.modulerizr_finished.promise(modulerizr);
 
-    compiler.run((err, stats) => { // Stats Object
+    return await compiler.run((err, stats) => { // Stats Object
         //console.log(err, stats)
         if (err)
-            console.error('sth went wrong', err);
+            throw new Error('Something went wrong', err)
         else
-            console.log('finished');
+            console.log(color.green('Modulerizr finished'));
     });
 }
 
