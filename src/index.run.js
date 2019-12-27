@@ -35,7 +35,7 @@ async function runOne(_config) {
     });
     const modulerizr = new Modulerizr(config, compiler);
 
-    modulerizr.log(`\nThe rootPath is: ${config._rootPath}`);
+    modulerizr.log(`The rootPath is: ${config._rootPath}`);
 
     compiler.hooks.modulerizr_init = new AsyncSeriesHook(['modulerizr']);
     compiler.hooks.modulerizr_ready = new AsyncSeriesHook(['modulerizr']);

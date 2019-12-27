@@ -11,7 +11,7 @@ function Modulerizr(config) {
     const log = getLogger({
         name: config.logName || 'modulerizr',
         level: config.logLevel || 'trace',
-        timestamp: config.logTimeStamp || true
+        timestamp: config.logTimeStamp || false
     });
 
 
