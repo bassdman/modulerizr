@@ -1,4 +1,3 @@
-const fs = require('fs-extra');
 const path = require('path');
 
 class DebugPlugin {
@@ -13,8 +12,14 @@ class DebugPlugin {
         if (this.config.createDebugFile === false)
             return;
 
-        compiler.hooks.doneModulerizr.tapPromise('DebugPlugin-CreateDebugFile', async(stats, modulerizr) => {
-            return await fs.writeFile(path.join(modulerizr.config.dest, 'modulerizr-debug.config.json'), JSON.stringify({ config: modulerizr.config, store: modulerizr.store.queryOne('$') }, null, 1));
+        compiler.hooks.emitModulerizr.tap('DebugPlugin-CreateDebugFile', async(compilation, modulerizr) => {
+            const content = JSON.stringify({ config: modulerizr.config, store: modulerizr.store.queryOne('$') }, null, 1);
+            compilation.assets['modulerizr-debug.config.json'] = {
+                source() {
+                    return content;
+                },
+                size: content.length
+            }
         });
     }
 }

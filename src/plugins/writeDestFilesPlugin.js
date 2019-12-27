@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs-extra');
 const pretty = require('pretty');
 
 class WriteDestFilesPlugin {
@@ -7,38 +6,17 @@ class WriteDestFilesPlugin {
         this.internal = true;
     }
     async apply(compiler) {
-        compiler.hooks.doneModulerizr.tapPromise('WriteDestFilesPlugin', async(stats, modulerizr) => {
-            /*      const paths = [
-                      './samples/sample-01-hello-world/01_helloworld.html',
-                      './samples/sample-02-custom-wrapper/02_customWrapper.html'
-                  ]
-                  webpackconfig.plugins.push(new HtmlReplaceWebpackPlugin([{
-                      pattern: '<hello-world></hello-world>',
-                      replacement: 'Tag wurde ersetzt'
-                  }, ]));
-
-                  paths.forEach(_path => {
-                      webpackconfig.plugins.push(new HtmlWebpackPlugin({
-                          template: _path,
-                          filename: path.basename(_path),
-                          mode: 'development',
-                          cache: false,
-                          hash: true,
-                          minify: false
-                      }))
-                  })*/
-
-            const destpath = modulerizr.config.dest;
-
+        compiler.hooks.emitModulerizr.tap('WriteDestFilesPlugin', async(compilation, modulerizr) => {
             modulerizr.store.each('$.src.*', async(currentFile, currentPath, i) => {
-                const filePath = path.join(destpath, removeLeadSubfoldersFromPath(modulerizr.config.src, currentFile.path));
-                const fileContent = pretty(currentFile.content);
+                const filename = path.basename(currentFile.path)
 
-                await fs.ensureDir(destpath);
-                return await fs.writeFile(filePath, fileContent);
+                compilation.assets[filename] = {
+                    source() {
+                        return pretty(currentFile.content)
+                    },
+                    size: currentFile.content.length
+                }
             });
-
-            return;
         })
 
     }

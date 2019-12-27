@@ -25,7 +25,7 @@ class ScopeScriptsPlugin {
             })
         });
 
-        compiler.hooks.modulerizr_afterRender.tapPromise('ScopeScriptsPlugin', async(modulerizr) => {
+        compiler.hooks.afterRenderModulerizr.tapPromise('ScopeScriptsPlugin-afterRender', async(compilation, modulerizr) => {
             modulerizr.store.$each(`$.src.*/script[${this.scopedAttributeName}]`, ($, currentFile, currentPath) => {
                 const embeddedComponentId = $.parent('[data-component-instance]').attr('data-component-instance');
                 const embeddedComponent = modulerizr.store.queryOne(`$.embeddedComponents.id_${embeddedComponentId}`);
@@ -38,7 +38,7 @@ class ScopeScriptsPlugin {
             });
         })
 
-        compiler.hooks.doneModulerizr.tapPromise('ScopeScriptsPlugin-cleanup', async(stats, modulerizr) => {
+        compiler.hooks.finishedModulerizr.tapPromise('ScopeScriptsPlugin-cleanup', async(stats, modulerizr) => {
             return modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
                 $(`[${this.scopedAttributeName}]`).removeAttr(this.scopedAttributeName);
             });

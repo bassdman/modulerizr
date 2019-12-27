@@ -5,7 +5,7 @@ class PreRenderPlugin {
         this.internal = true;
     }
     apply(compiler) {
-        compiler.hooks.modulerizr_render.tapPromise('PreRenderPlugin', async(modulerizr) => {
+        compiler.hooks.modulerizr_render.tap('PreRenderPlugin', async(modulerizr) => {
             modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
                 let allComponentsRendered = false;
                 let level = 1;
@@ -25,7 +25,7 @@ class PreRenderPlugin {
             });
         });
 
-        compiler.hooks.doneModulerizr.tapPromise('PreRenderPlugin-cleanup', async(stats, modulerizr) => {
+        compiler.hooks.finishedModulerizr.tapPromise('PreRenderPlugin-cleanup', async(stats, modulerizr) => {
             return modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
                 $(`[data-component-instance]`).removeAttr('data-component-instance');
             });
