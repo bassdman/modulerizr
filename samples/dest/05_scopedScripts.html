@@ -1,64 +1,52 @@
-<html lang="en">
-
-  <head>
+<html lang="en"><head>
     <title>Scope Styles</title>
-  </head>
+</head>
 
-  <body>
+<body>
     <!-- 
         In this example we have scoped styles.
         With scoped styles they don't affect other components - neither child-components. 
       -->
     <script>
-      var globalVariable = 'This variable is global';
+        var globalVariable = 'This variable is global';
     </script>
-    <div data-v-f297c2fb id="f297c2fb" data-component="scoped-scripts">
-      <div data-v-f297c2fb>This is a random element just to show, that scripts can stay in a component with other html tags.</div>
-      <script>
-        (function(window) {
-          var _m = {
-            id: "f297c2fb",
-            name: "scoped-scripts",
-            $el: document.getElementById("f297c2fb"),
-            attributes: {
-              ":param1": "param1",
-              ":param2": "param2"
-            },
-            slots: {
-              "_default": ""
-            }
-          };
+    <div data-v-f297c2fb id="f297c2fb" data-component="scoped-scripts"><div data-v-f297c2fb>This is a random element just to show, that scripts can stay in a component with other html tags.</div>
+   <script>(function(window){
+                        var _m = {
+                            id: "f297c2fb",
+                            name: "scoped-scripts",
+                            $el: document.getElementById("f297c2fb"),
+                            attributes: {":param1":"param1",":param2":"param2"},
+                            slots: {"_default":""}
+                        };
 
-          //a private variable - not accessible outside this scriptblock
-          var scope = 'component';
+       //a private variable - not accessible outside this scriptblock
+       var scope = 'component';
 
-          //assigned to the window-object. It can be used outside this scriptblock
-          window.nonScopedVariable = 'accessible globally';
+       //assigned to the window-object. It can be used outside this scriptblock
+       window.nonScopedVariable = 'accessible globally';
 
-          //Acessible because it is inside this scriptblock
-          console.log(scope)
+       //Acessible because it is inside this scriptblock
+       console.log(scope)
 
-          //The componentInfo is available in every component
-          console.log($m)
+       //The componentInfo is available in every component
+       console.log($m)
 
-        })(window);
-      </script>
-      <script>
-        //Returns null - Variable scope does not exist - it is scoped in the block above
-        console.log(window.scope)
+                    })(window);</script>
+   <script>
+       //Returns null - Variable scope does not exist - it is scoped in the block above
+       console.log(window.scope)
 
-        //This is accessible because it is assigned to the window-object
-        console.log(nonScopedVariable);
+       //This is accessible because it is assigned to the window-object
+       console.log(nonScopedVariable);
 
-        //This is defined in the src-file and is global - so it is accessible here.
-        console.log(globalVariable);
+       //This is defined in the src-file and is global - so it is accessible here.
+       console.log(globalVariable);
 
-        //ComponentInfo is just available in scoped scripts
-        console.log(window.$m)
-      </script>
-    </div>
+       //ComponentInfo is just available in scoped scripts
+       console.log(window.$m)
+   </script>
+</div>
 
 
-  </body>
-
-</html>
+</body></html>

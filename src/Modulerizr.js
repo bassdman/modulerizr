@@ -3,10 +3,12 @@ const jp = require('jsonpath');
 const cheerio = require('cheerio');
 
 const getLogger = require('webpack-log');
+const { HtmlReplaceWebpackPlugin } = require('./plugins/HtmlReplaceWebpackPlugin')
+
 
 const { foreachPromise } = require('./utils');
 
-function Modulerizr(config) {
+function Modulerizr(config, compiler) {
     const store = {};
     const log = getLogger({
         name: config.logName || 'modulerizr',
@@ -81,13 +83,65 @@ function Modulerizr(config) {
 
                 const nodes = jp.nodes(store, query.toLowerCase()) || [];
 
+                return nodes.forEach((node, i) => {
+                    const _path = node.path.join('.');
+
+                    fn(node.value, _path, i);
+                })
+            },
+            eachPromise(query, fn) {
+                if (query == null)
+                    throw new Error('Modulerizr.store.parent(query): query is undefined');
+
+                const nodes = jp.nodes(store, query.toLowerCase()) || [];
+
                 return foreachPromise(nodes, async(node, i) => {
                     const _path = node.path.join('.');
 
                     await fn(node.value, _path, i);
                 })
             },
+            save(node) {
+
+            },
             $each(_query, fn) {
+                if (_query == null)
+                    throw new Error('Modulerizr.store.parent(query): query is undefined');
+
+                const query = _query.split('/')[0];
+                const selector = _query.split('/').length > 1 ? _query.split('/')[1] : undefined;
+
+                const nodes = jp.nodes(store, query.toLowerCase()) || [];
+
+                return nodes.forEach((node, i) => {
+                    const _path = node.path.join('.');
+                    const $el = node.value.content ? cheerio.load(node.value.content) : undefined;
+
+                    if (selector == null) {
+                        fn($el, node.value, _path, i);
+                    } else {
+                        const $tags = $el(selector);
+
+                        $tags.each((i, el) => {
+                            const $currentTag = $el(el);
+                            fn($currentTag, $el, _path, i);
+
+                        });
+                    }
+
+                    if ($el !== undefined) {
+                        this.value(`${_path}.content`, $el.html(':root'))
+                        new HtmlReplaceWebpackPlugin([{
+                            filePath: node.value.absolutePath,
+                            pattern: /.*/s,
+                            x: 'a',
+                            replacement: $el.html(':root')
+                        }]).apply(compiler);
+
+                    }
+                })
+            },
+            $eachPromise(_query, fn) {
                 if (_query == null)
                     throw new Error('Modulerizr.store.parent(query): query is undefined');
 
@@ -113,7 +167,13 @@ function Modulerizr(config) {
                     }
 
                     if ($el !== undefined) {
-                        this.value(`${_path}.content`, $el.html(':root'))
+                        this.value(`${_path}.content`, $el.html(':root'));
+                        new HtmlReplaceWebpackPlugin([{
+                            filePath: node.value.absolutePath,
+                            pattern: node.value.content,
+                            x: 'b',
+                            replacement: $el.html(':root')
+                        }]).apply(compiler);
                     }
                 })
             }

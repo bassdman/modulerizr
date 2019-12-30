@@ -2,13 +2,9 @@ const { foreachPromise } = require('./utils');
 const { Modulerizr } = require('./Modulerizr');
 const color = require('colors');
 
-const HtmlWebpackPlugin = require('html-webpack-plugin'); //installed via npm
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpack = require('webpack'); //to access built-in plugins
-const path = require('path');
-const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin')
-const AsyncSeriesHook = require('tapable').AsyncSeriesHook;
-
-
+const { AsyncSeriesHook, SyncHook } = require('tapable');
 
 async function run(_config) {
     let config = _config;
@@ -24,46 +20,54 @@ async function runOne(_config) {
     const config = Object.assign(defaultConfig, _config);
     config.plugins = (config._plugins).concat(config.plugins || []);
 
-
     const compiler = webpack({
         plugins: [
             new webpack.ProgressPlugin(),
+            new CleanWebpackPlugin(),
         ],
         output: {
             path: config.dest
         },
         mode: 'development'
     });
+
+    compiler.hooks.modulerizrInit = new AsyncSeriesHook(['modulerizr']);
+    compiler.hooks.modulerizrReady = new AsyncSeriesHook(['modulerizr']);
+    compiler.hooks.modulerizrRender = new AsyncSeriesHook(['modulerizr']);
+    compiler.hooks.modulerizrAfterRender = new AsyncSeriesHook(['modulerizr']);
+    compiler.hooks.compilationModulerizr = new SyncHook(['modulerizr']);
+
+    compiler.hooks.emitModulerizr = new AsyncSeriesHook(['compilation', 'modulerizr']);
+    compiler.hooks.finishedModulerizr = new AsyncSeriesHook(['stats', 'modulerizr']);
+
+
+
+
     const modulerizr = new Modulerizr(config, compiler);
 
     modulerizr.log(`The rootPath is: ${config._rootPath}`);
 
-    compiler.hooks.modulerizr_init = new AsyncSeriesHook(['modulerizr']);
-    compiler.hooks.modulerizr_ready = new AsyncSeriesHook(['modulerizr']);
-    compiler.hooks.modulerizr_render = new AsyncSeriesHook(['modulerizr']);
-    compiler.hooks.afterRenderModulerizr = new AsyncSeriesHook(['compilation', 'modulerizr']);
-    compiler.hooks.emitModulerizr = new AsyncSeriesHook(['compilation', 'modulerizr']);
-    compiler.hooks.finishedModulerizr = new AsyncSeriesHook(['stats', 'modulerizr']);
-
     modulerizr.config.plugins.forEach(plugin => {
-        plugin.apply(compiler, modulerizr);
+        plugin.apply(compiler);
     });
+
+    await compiler.hooks.modulerizrInit.promise(modulerizr);
+    await compiler.hooks.modulerizrReady.promise(modulerizr);
+    await compiler.hooks.modulerizrRender.promise(modulerizr);
+    await compiler.hooks.modulerizrAfterRender.promise(modulerizr);
+    await compiler.hooks.finishedModulerizr.promise(modulerizr);
 
     compiler.hooks.emit.tapPromise('ExecuteModulerizrEmit', async(compilation) => {
         await compiler.hooks.emitModulerizr.promise(compilation, modulerizr);
     });
-    compiler.hooks.afterCompile.tapPromise('ExecuteModulerizrBeforeCompile', async(compilation) => {
-        await compiler.hooks.modulerizr_init.promise(modulerizr);
-        await compiler.hooks.modulerizr_ready.promise(modulerizr);
-        await compiler.hooks.modulerizr_render.promise(modulerizr);
-        await compiler.hooks.afterRenderModulerizr.promise(compilation, modulerizr);
-        await compiler.hooks.finishedModulerizr.promise(compilation, modulerizr);
+    compiler.hooks.compilation.tap('ExecuteModulerizrCompilation', (compilation, compilationParams) => {
+        compiler.hooks.compilationModulerizr.call(compilation, compilationParams, modulerizr);
     });
 
     return await compiler.run((err, stats) => { // Stats Object
         //console.log(err, stats)
         if (err)
-            throw new Error('Something went wrong', err)
+            throw new Error(err)
 
         console.log(color.green('Modulerizr finished'));
         return true

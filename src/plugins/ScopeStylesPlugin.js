@@ -7,7 +7,7 @@ class ScopeStylesPlugin {
         this.internal = true;
     }
     apply(compiler) {
-        compiler.hooks.modulerizr_ready.tapPromise('ScopeStylesPlugin', async(modulerizr) => {
+        compiler.hooks.modulerizrReady.tap('ScopeStylesPlugin', modulerizr => {
             return modulerizr.store.$each("$.component.*", ($, currentFile, currentPath, i) => {
                 $('*').not('style,script').attr('data-v-' + currentFile.id, "")
 

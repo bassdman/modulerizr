@@ -4,8 +4,8 @@ class ScopeScriptsPlugin {
         this.internal = true;
     }
     apply(compiler) {
-        compiler.hooks.modulerizr_ready.tapPromise('ScopeScriptsPlugin', async(modulerizr) => {
-            return modulerizr.store.$each('$.component.*', ($, currentFile, currentPath) => {
+        compiler.hooks.modulerizrReady.tap('ScopeScriptsPlugin', modulerizr => {
+            modulerizr.store.$each('$.component.*', ($, currentFile, currentPath) => {
                 const $scriptTags = $(`script[${this.scopedAttributeName}]`);
                 $scriptTags.each((i, e) => {
                     const $currentScripts = $(e);
@@ -22,10 +22,10 @@ class ScopeScriptsPlugin {
                     })(window);`;
                     $currentScripts.html(scopedScript);
                 });
-            })
+            });
         });
 
-        compiler.hooks.afterRenderModulerizr.tapPromise('ScopeScriptsPlugin-afterRender', async(compilation, modulerizr) => {
+        compiler.hooks.modulerizrAfterRender.tap('ScopeScriptsPlugin-afterRender', modulerizr => {
             modulerizr.store.$each(`$.src.*/script[${this.scopedAttributeName}]`, ($, currentFile, currentPath) => {
                 const embeddedComponentId = $.parent('[data-component-instance]').attr('data-component-instance');
                 const embeddedComponent = modulerizr.store.queryOne(`$.embeddedComponents.id_${embeddedComponentId}`);
@@ -38,8 +38,8 @@ class ScopeScriptsPlugin {
             });
         })
 
-        compiler.hooks.finishedModulerizr.tapPromise('ScopeScriptsPlugin-cleanup', async(stats, modulerizr) => {
-            return modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
+        compiler.hooks.finishedModulerizr.tap('ScopeScriptsPlugin-cleanup', modulerizr => {
+            modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
                 $(`[${this.scopedAttributeName}]`).removeAttr(this.scopedAttributeName);
             });
         })

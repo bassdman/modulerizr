@@ -1,11 +1,12 @@
 const cheerio = require('cheerio');
+const { HtmlReplaceWebpackPlugin } = require('./HtmlReplaceWebpackPlugin')
 
 class PreRenderPlugin {
     constructor(pluginconfig = {}) {
         this.internal = true;
     }
     apply(compiler) {
-        compiler.hooks.modulerizr_render.tap('PreRenderPlugin', async(modulerizr) => {
+        compiler.hooks.modulerizrRender.tap('PreRenderPlugin', modulerizr => {
             modulerizr.store.each("$.src.*", (currentFile, currentPath, i) => {
                 let allComponentsRendered = false;
                 let level = 1;
@@ -22,11 +23,18 @@ class PreRenderPlugin {
                     }
                     level++;
                 }
+
+                new HtmlReplaceWebpackPlugin([{
+                    pattern: /.*/s,
+                    x: 'c',
+                    replacement: content.trim(),
+                    filePath: currentFile.absolutePath
+                }]).apply(compiler);
             });
         });
 
-        compiler.hooks.finishedModulerizr.tapPromise('PreRenderPlugin-cleanup', async(stats, modulerizr) => {
-            return modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
+        compiler.hooks.finishedModulerizr.tap('PreRenderPlugin-cleanup', modulerizr => {
+            modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
                 $(`[data-component-instance]`).removeAttr('data-component-instance');
             });
         })
@@ -36,7 +44,6 @@ class PreRenderPlugin {
 
 function render(modulerizr, currentPath, content) {
     const $ = cheerio.load(content);
-
     const $componentsToRender = $('[data-render-comp]');
     $componentsToRender.each((i, e) => {
         const $currentComp = $(e);

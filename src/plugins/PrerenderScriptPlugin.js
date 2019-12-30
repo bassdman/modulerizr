@@ -11,9 +11,9 @@ class PrerenderScriptPlugin {
         this.internal = true;
     }
     apply(compiler) {
-        compiler.hooks.afterRenderModulerizr.tapPromise('PrerenderScriptPlugin', async(compilation, modulerizr) => {
+        compiler.hooks.modulerizrAfterRender.tapPromise('PrerenderScriptPlugin', async(modulerizr) => {
 
-            return await modulerizr.store.$each(`$.src.*/script[${this.serversideAttributeName}]`, async($currentScript, currentFile, currentPath) => {
+            return await modulerizr.store.$eachPromise(`$.src.*/script[${this.serversideAttributeName}]`, async($currentScript, currentFile, currentPath) => {
                 const tempFileHash = crypto.createHash('md5').update($currentScript.html().trim()).digest("hex").substring(0, 8);
                 const tempFilename = "./_temp/temp_" + tempFileHash + '.js';
 
@@ -33,7 +33,7 @@ class PrerenderScriptPlugin {
             });
         })
 
-        compiler.hooks.finishedModulerizr.tapPromise('PrerenderScriptPlugin-cleanup', async(stats, modulerizr) => {
+        compiler.hooks.finishedModulerizr.tapPromise('PrerenderScriptPlugin-cleanup', async(modulerizr) => {
             return modulerizr.store.$each("$.src.*", async($, currentFile, currentPath, i) => {
                 $(`[${this.serversideAttributeName}]`).remove();
                 await fs.remove('./_temp');

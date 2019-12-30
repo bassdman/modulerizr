@@ -6,8 +6,8 @@ class OnceAttributePlugin {
         this.internal = true;
     }
     apply(compiler) {
-        compiler.hooks.afterRenderModulerizr.tapPromise('OnceAttributePlugin', async(compilation, modulerizr) => {
-            return modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
+        compiler.hooks.modulerizrAfterRender.tap('OnceAttributePlugin', modulerizr => {
+            modulerizr.store.$each("$.src.*", ($, currentFile, currentPath, i) => {
                 const onceAttributes = {};
 
                 logIfExternalScriptWithoutOnceFound(modulerizr, $, this.onceAttributeName);

@@ -8,8 +8,8 @@ class InitComponentsPlugin {
     constructor(pluginconfig = {}) {
         this.internal = true;
     }
-    async apply(compiler) {
-        compiler.hooks.modulerizr_init.tapPromise('InitComponentsPlugin', async(modulerizr) => {
+    apply(compiler) {
+        compiler.hooks.modulerizrInit.tapPromise('InitComponentsPlugin', async(modulerizr) => {
             if (modulerizr.config.components == undefined)
                 throw new Error('Error in your modulerizr.config: "src" is undefined but required.');
 

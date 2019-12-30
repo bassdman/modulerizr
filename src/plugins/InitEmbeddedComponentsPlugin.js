@@ -5,8 +5,8 @@ class InitEmbeddedComponentsPlugin {
     constructor(pluginconfig = {}) {
         this.internal = true;
     }
-    async apply(compiler) {
-        compiler.hooks.modulerizr_init.tapPromise('InitEmbeddedComponentsPlugin', async(modulerizr) => {
+    apply(compiler) {
+        compiler.hooks.modulerizrInit.tapPromise('InitEmbeddedComponentsPlugin', async(modulerizr) => {
 
             return await modulerizr.store.each('$["src","component"].*', (currentFile, currentPath, i) => {
                 return addEmbeddedComponents(modulerizr, currentFile, currentPath, i);
