@@ -1,5 +1,4 @@
 const cheerio = require('cheerio');
-const { HtmlReplaceWebpackPlugin } = require('./HtmlReplaceWebpackPlugin')
 
 class PreRenderPlugin {
     constructor(pluginconfig = {}) {
@@ -24,12 +23,7 @@ class PreRenderPlugin {
                     level++;
                 }
 
-                new HtmlReplaceWebpackPlugin([{
-                    pattern: /.*/s,
-                    x: 'c',
-                    replacement: content.trim(),
-                    filePath: currentFile.absolutePath
-                }]).apply(compiler);
+                modulerizr.save(currentFile.absolutePath, content.trim());
             });
         });
 
