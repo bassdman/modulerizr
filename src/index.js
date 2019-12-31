@@ -1,5 +1,5 @@
 const { run } = require('./index.run');
-const { DebugPlugin } = require("./plugins/DebugPlugin");
+const { DebugPlugin } = require("modulerizr-webpack-plugin");
 
 async function modulerizr() {
     return {
