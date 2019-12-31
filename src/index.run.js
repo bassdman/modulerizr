@@ -1,5 +1,7 @@
 const color = require('colors');
 const webpack = require('webpack');
+const path = require('path');
+
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { ModulerizrWebpackPlugin } = require('modulerizr-webpack-plugin');
 const { foreachPromise } = require('modulerizr-webpack-plugin/utils');
@@ -14,8 +16,8 @@ async function run(_config) {
 }
 
 async function runOne(_config) {
-    const config = Object.assign({
-        dest: "dest",
+    const config = Object.assign({}, {
+        dest: path.resolve(_config._rootPath, "dest"),
         defaultComponentWrapper: "div",
         maxRecursionLevel: 100
     }, _config);
