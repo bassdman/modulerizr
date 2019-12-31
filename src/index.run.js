@@ -15,21 +15,15 @@ async function run(_config) {
     await foreachPromise(config, async conf => await runOne(conf));
 }
 
-async function runOne(_config) {
-    const config = Object.assign({}, {
-        dest: path.resolve(_config._rootPath, "dest"),
-        defaultComponentWrapper: "div",
-        maxRecursionLevel: 100
-    }, _config);
-
+async function runOne(config) {
     const compiler = webpack({
         plugins: [
             new webpack.ProgressPlugin(),
             new CleanWebpackPlugin(),
-            new ModulerizrWebpackPlugin(_config)
+            new ModulerizrWebpackPlugin(config)
         ],
         output: {
-            path: config.dest
+            path: config.dest || path.resolve(__dirname, "dest"),
         },
         mode: 'development'
     });
