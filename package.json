@@ -1,6 +1,6 @@
 {
     "name": "modulerizr",
-    "version": "1.5.2-beta",
+    "version": "1.5.3-beta",
     "description": "Integrate a powerful, component based architecture to your legacy project in just a few steps",
     "main": "src/index.js",
     "scripts": {
@@ -18,7 +18,8 @@
         "modulearisation",
         "legacy",
         "project",
-        "taskrunner"
+        "taskrunner",
+        "modulerizr"
     ],
     "repository": {
         "type": "git",
@@ -32,6 +33,6 @@
         "jasmine": "^3.5.0",
         "webpack": "^4.41.4",
         "webpack-log": "^3.0.1",
-        "modulerizr-webpack-plugin": "./plugins/modulerizr-webpack-plugin"
+        "modulerizr-webpack-plugin": "^0.1.1-beta"
     }
 }
