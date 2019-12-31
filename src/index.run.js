@@ -23,7 +23,7 @@ async function runOne(config) {
             new ModulerizrWebpackPlugin(config)
         ],
         output: {
-            path: config.dest || path.resolve(__dirname, "dest"),
+            path: config.dest || path.resolve(config._rootPath, "dest"),
         },
         mode: 'development'
     });
