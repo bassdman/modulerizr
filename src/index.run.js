@@ -1,9 +1,8 @@
-const { foreachPromise } = require('./utils');
 const color = require('colors');
-
+const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { ModulerizrWebpackPlugin } = require('modulerizr-webpack-plugin');
-const webpack = require('webpack'); //to access built-in plugins
+const { foreachPromise } = require('modulerizr-webpack-plugin/utils');
 
 async function run(_config) {
     let config = _config;
