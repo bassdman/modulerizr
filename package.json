@@ -1,6 +1,6 @@
 {
     "name": "modulerizr",
-    "version": "1.5.3-beta",
+    "version": "1.5.4-beta",
     "description": "Integrate a powerful, component based architecture to your legacy project in just a few steps",
     "main": "src/index.js",
     "scripts": {

@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs-extra');
 
 module.exports = function(argv) {
     const rootpath = path.join(argv[1], '../../../');
