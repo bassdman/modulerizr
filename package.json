@@ -1,6 +1,6 @@
 {
     "name": "modulerizr",
-    "version": "1.5.4-beta",
+    "version": "1.5.6-beta",
     "description": "Integrate a powerful, component based architecture to your legacy project in just a few steps",
     "main": "src/index.js",
     "scripts": {
@@ -29,10 +29,13 @@
         "url": "https://github.com/bassdman/modulerizr.git/issues"
     },
     "devDependencies": {
+        "jasmine": "^3.5.0"
+    },
+    "dependencies": {
         "clean-webpack-plugin": "^3.0.0",
-        "jasmine": "^3.5.0",
-        "webpack": "^4.41.4",
-        "webpack-log": "^3.0.1",
-        "modulerizr-webpack-plugin": "^0.1.1-beta"
+        "colors": "^1.4.0",
+        "modulerizr-webpack-plugin": "^0.1.2-beta",
+        "webpack": "^4.41.5",
+        "webpack-log": "^3.0.1"
     }
 }
