@@ -1,4 +1,3 @@
-const { DebugPlugin } = require("modulerizr");
 const { ModulerizrJsRenderPlugin } = require("modulerizr-jsrender-plugin");
 const path = require('path');
 
@@ -7,7 +6,6 @@ module.exports = {
     "components": ["**/*.component.html"],
     "debug": true,
     "plugins": [
-        new DebugPlugin(),
         new ModulerizrJsRenderPlugin({ allowCode: true, debugMode: false })
     ]
 }

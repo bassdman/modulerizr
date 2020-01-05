@@ -11,6 +11,9 @@
     npm install modulerizr --save-dev
 ```
 
+>Modulerizr is in Gamma-Version now. This means, this codebase is stable and there will be no more features until final release (~01/02 2020). More tests will be added and documentation will be completed. 
+
+
 <!-- - [Quicklink to the API](#api-description) -->
 
 ## The Problem
@@ -318,7 +321,7 @@ Type: Boolean. Default: false.
 If you need a custom feature, you can add it via plugin.
 Type: Array. 
 ``` javascript
-const { modulerizr, DebugPlugin } = require("modulerizr");
+const { modulerizr } = require("modulerizr");
 
 modulerizr.run({
     ...
@@ -333,7 +336,7 @@ By Default, components are wrapped by a div-tag. To change this, a component nee
 This will be overwritten by the tag assigned in the component.
 
 ``` javascript
-const { modulerizr, DebugPlugin } = require("modulerizr");
+const { modulerizr } = require("modulerizr");
 
 modulerizr.run({
     ...
@@ -369,7 +372,7 @@ By default ther is a maximumRecursionLevel of 100 - if you have more, there will
 Maybe there is a usecase where you need more levels. You can increase this level in the config with the maxRecursionLevel-attribute.
 
 ``` javascript
-const { modulerizr, DebugPlugin } = require("modulerizr");
+const { modulerizr } = require("modulerizr");
 
 modulerizr.run({
     ...

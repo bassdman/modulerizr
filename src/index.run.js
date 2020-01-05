@@ -29,9 +29,11 @@ async function runOne(config) {
     });
 
     return await compiler.run((err, stats) => { // Stats Object
-        //console.log(err, stats)
-        if (err)
-            throw new Error(err);
+
+        if (err) {
+            console.log(err)
+            throw new Error('Modulerizr failed.');
+        }
 
         console.log(color.green('Modulerizr finished.'));
         return true
