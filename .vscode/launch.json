@@ -19,11 +19,11 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "npm run modulerizr_1",
+            "name": "npm run testrun",
             "runtimeExecutable": "npm",
             "runtimeArgs": [
                 "run-script",
-                "modulerizr"
+                "testrun"
             ],
             "port": 9229,
         },

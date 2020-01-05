@@ -6,7 +6,8 @@
     "scripts": {
         "modulerizr": "node bin/index.js",
         "test": "jasmine",
-        "webpack": "node ./src/index.webpack.js"
+        "webpack": "node ./src/index.webpack.js",
+        "testrun": "npm --prefix ./samples/ run modulerizr_all"
     },
     "bin": {
         "modulerizr": "./bin/index.js"
@@ -34,7 +35,7 @@
     "dependencies": {
         "clean-webpack-plugin": "^3.0.0",
         "colors": "^1.4.0",
-        "modulerizr-webpack-plugin": "^0.1.6-beta",
+        "modulerizr-webpack-plugin": "./plugins/modulerizr-webpack-plugin",
         "webpack": "^4.41.5",
         "webpack-log": "^3.0.1"
     }
