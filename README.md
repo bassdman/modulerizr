@@ -11,7 +11,7 @@
     npm install modulerizr --save-dev
 ```
 
->Modulerizr is in Gamma-Version now. This means, this codebase is stable and there will be no more features until final release (~01/02 2020). More tests will be added and documentation will be completed. 
+>Modulerizr is in Gamma-Version now. This codebase is stable and there will be no more features until final release (~01/02 2020). More tests will be added and documentation will be completed. 
 
 
 <!-- - [Quicklink to the API](#api-description) -->
@@ -27,7 +27,7 @@ Let's consider the html below:
 ``` html
 <html>
     <head>
-        <title>Startpage</title>
+        <title>This could be a legacy page in your project</title>
         <!-- 
             This Stylesheet is 100kb large because it includes all the styles of your project.
             And you just need ****** 5% oft thes styles on this page 
@@ -71,19 +71,19 @@ Let's consider the html below:
 </html>
 ```
 
-Many solutions exist to reduce these problems in web projects, one of the most important ones is modularisation. 
-With it you have many small components that don't affect any other - except you want it. There are many good frameworks that do a veeeery, very good job with it
+Many solutions exist to reduce these problems in web projects, one of the most important ones is __modularisation__. 
+There are many good frameworks that use this pattern and do a veeeery, very good job with it
  - Angular
  - Vue
  - React
  - ... many other ones
 
-BUT: These Frameworks DON'T WORK GOOD WITHIN LEGACYPROJECTS. Have you ever seen Serverside-Syntax in Vue or Angular-Templates. No. That means you can not easily switch to modularisation when all your architecture is currently designed with php.
+BUT: These Frameworks DON'T WORK GOOD WITHIN LEGACYPROJECTS. Have you ever seen Serverside-Syntax in Vue or Angular-Templates. No. If you have a legacy project and want to change it to a modular system, you will have big problems. That means you can not easily switch to modularisation when all your architecture is currently designed with php.
 
 Here's is a solutionen - where you can have serverside syntax AND modularisation without big effort.
 
 ## The solution
-Modulerizr.
+__Modulerizr__.
 
 While angular, react,... give you many great features from the scratch without having to think about it, Modulerizr does it vice versa. It gives you a simple infrastructure for modularisation and you can add the features you want.
 
@@ -108,7 +108,7 @@ Imagine the following html-page "startpage.hml":
     </body>
 </html>
 ```
->The Brackets { } show serverside syntax. You could also add php-syntax,...
+>The Brackets { } show serverside syntax. It could also be php-syntax,...
 
 The component "custom-component-1.component.hml":
 ``` html
@@ -281,7 +281,7 @@ Type String or Array. Required.
 
 ##### components
 All component-files. [Glob-Syntax](https://www.npmjs.com/package/glob).
-Type: String or Array. Required.
+Type: String or Array. Optional. (But there will be a warning if you don't define it)
 ``` javascript
 {
     ...
@@ -295,8 +295,8 @@ Type: String or Array. Required.
 ```
 
 ##### dest
-The folder where the files will be rendered to. 
-Type: String. Required.
+The folder where the files will be rendered to. MUST BE AN ABSOLUTE PATH.
+Type: String. Optional. Defaults to "dest"
 ``` javascript
 {
     ...
@@ -348,7 +348,7 @@ modulerizr.run({
 
 
 ##### maxRecursionLevel
-What happens if you add component A in component A and the content does not change? We have an infinte-loop.
+What happens if you add component X in component X and the content does not change? We have an infinte-loop.
 
 ```html
 <component-a>
@@ -436,7 +436,7 @@ To be honest: This feature by itself is not better then a php-include, it wouldn
 Let's add some more "magic":
 
 ### Components
-Ok, before adding "magic", we need the basics of components.
+Sorry, before adding "magic", we need the basics of components.
 A component is always wrapped by a template-tag and has a uniqe name.
 ``` html
     <template name="xyz">
@@ -517,7 +517,7 @@ Right now the default wrapper-element is a div. But for some components you may 
 Add the "wrapper"-attribute to a component assignment to change the wrapper attribute.
 ```html
 ...
-<make-bold wrapper="h1">This is a bold header</make-bold>
+<make-bold m-wrapper="h1">This is a bold header</make-bold>
 ...
 ```
 will be rendered to
@@ -539,6 +539,8 @@ Instead of
 -->
 ...
 ```
+If you want to change the wrapper-element for all elements, [set the "defaultComponentWrapper"-Attribute](#defaultComponentWrapper) in the plugin-configuration.
+If both the config attribute ("defaultComponentWrapper") is set and the component attribute ("m-wrapper"), the component attribute will be used.
 
 #### Scoped Styles
 What happens if you have 2 components with the same style declaration, but different value? The style will be overwritten. :(
@@ -829,7 +831,40 @@ Declared multiple times in a src-file it would be rendered like this:
 </div>
 ```
 ### Plugins
+You can use any other webpack-plugin to add more features you want, for example for bundling,... 
+But there are some specific modulerizr-plugins that exist.
+#### Modulerizr-jsrender-plugin
+ The [modulerizr-jsrender-plugin](https://www.npmjs.com/package/modulerizr-jsrender-plugin) gives you the chance to add template-syntax in your templates. It is based on [JS-Render](https://www.npmjs.com/package/jsrender).
+```html
+Component:
+<template name="jsrender-example">
+    Hello {{:name}}.
+    {{if age> 30}}
+        You are reeeeally old.
+    {{/if}}
+    {{if age <= 30}}
+        In Germany they would call you "Jungspund".
+    {{/if}}
+</template>
 
+Src:
+<div>
+    <jsrender-example name="Peter" age="25"></jsrender-example>
+</div>
+
+Will be rendered to:
+<div>
+    <div>
+        Hello Peter.
+        In Germany the would call you "Jungspund".
+    </div>
+</div>
+```
+See more information about this plugin [here](https://www.npmjs.com/package/modulerizr-jsrender-plugin)
+
+
+#### Write your own Plugin
+A Modulerizr-Plugin is just a webpack-plugin. 
 
 ### Features in future
 - inline-templates in src-files, marked with a "inline-template"-Attribute.
@@ -838,5 +873,14 @@ Declared multiple times in a src-file it would be rendered like this:
 - scoped link tags
 - 
 
-> Hint: This readme is not finished yet. Wait a few days for more information.
+## Contribution
+- You have some ideas how to make modulerizr more simple?
+- You have ideas for a new feature / new modulerizr-plugin?
+- You found a bug?
+- Or you have some general demands/questions?
 
+Then [create an issue](https://github.com/bassdman/modulerizr/issues) or contact me.
+Or if you have time and a good idea, then you can of course create a new plugin. This would be awesome :D
+
+## Last but not least
+Happy Coding. Let's get rid of your legacy code in your Projects :D

@@ -21,7 +21,7 @@ async function runOne(config) {
             new webpack.ProgressPlugin(),
             new CleanWebpackPlugin(),
             new ModulerizrWebpackPlugin(config)
-        ],
+        ].concat(config.plugins || []),
         output: {
             path: config.dest || path.resolve(config._rootPath, "dest"),
         },
