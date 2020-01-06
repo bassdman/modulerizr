@@ -837,6 +837,38 @@ Declared multiple times in a src-file it would be rendered like this:
     ...
 </div>
 ```
+
+#### Component Config
+Your Component may need some specific configuration. You can add this in your component by the attribute "m-componentconfig". 
+```html
+<template name="any-component">
+    <script m-componentconfig>
+        /*Add your component configuration here*/
+    </script>
+</template>
+```
+
+This is useful if you for example want to preload data and use it with the modulerizr-jsrender-plugin. This script must be a node script and export an object.
+
+```html
+<template name="any-component">
+    <script m-componentconfig>
+        //This data could also be fetched from anywhere else asynchronous
+        const data = {
+                    name: "dieter",
+                    kids: [{name:'heinz'},{name:'gustav'}]
+                };
+
+        module.exports = {
+            data(){
+                return data;
+            }
+        }
+    </script>
+</template>
+```
+
+
 ### Modulerizr-Plugins
 You can use any other webpack-plugin to add more features you want, for example for bundling,... 
 But there are some specific modulerizr-plugins that exist.
