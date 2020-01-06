@@ -221,3 +221,10 @@ compiler.hooks.modulerizrFinished.tapPromise('PluginName', (context) => {
 
 #### context
 Every hook has a context-object. If you want to add data to other plugins, add this data to the context just by modifying it. You can also add helper functions. Look at [StarWarsPlugin v4 Example](#get-starwars-characters) to see how to get / add data to the context.
+
+
+## May the force be with you
+Now you have all knowledge to create a new plugin, my Padawan. 
+Now the force shows you how to write modulerizr-plugins. 
+
+When I forgot to note sth important, please tell me or [create an issue](https://github.com/bassdman/modulerizr/issues).
