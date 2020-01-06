@@ -868,7 +868,21 @@ This is useful if you for example want to preload data and use it with the modul
 </template>
 ```
 
-
+This data will also be rendered in the scoped scripts: 
+```html
+ <script>
+    (function(window){
+        var _component = {
+            id: "c7350017",
+            name: "any-component",
+            $el: document.getElementById("c7350017"),
+            data: {"name":"dieter","kids":[{"name":"heinz"},{"name":"gustav","def":"ghi"}]},
+            attributes: {},
+            slots: {"_default":""},
+        };
+    })(window);
+</script>
+```
 ### Modulerizr-Plugins
 You can use any other webpack-plugin to add more features you want, for example for bundling,... 
 But there are some specific modulerizr-plugins that exist.
