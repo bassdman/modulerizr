@@ -884,7 +884,7 @@ const {StyleExtHtmlWebpackPlugin } = require('style-ext-html-webpack-plugin');
 ```
 
 #### Write your own Plugin
-[Read here how to write your own Plugins]().
+[Read here how to write your own Plugins](https://github.com/bassdman/modulerizr/blob/master/README.ownplugin.md).
 
 ### Features in future
 - inline-templates in src-files, marked with a "inline-template"-Attribute.

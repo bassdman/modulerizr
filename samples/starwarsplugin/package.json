@@ -1,0 +1,25 @@
+{
+    "name": "modulerizr-examples",
+    "version": "1.0.0",
+    "description": "Render a single component into an html-file",
+    "main": "index.js",
+    "private": true,
+    "scripts": {
+        "modulerizr_starwars": "modulerizr run --debug"
+    },
+    "keywords": [
+        "test",
+        "component",
+        "render",
+        "modulerizr"
+    ],
+    "author": "Manuel Gelsen",
+    "license": "MIT",
+    "dependencies": {
+        "modulerizr": "~1.7.0-gamma"
+    },
+    "devDependencies": {
+        "node-fetch": "^2.6.0",
+        "webpack-log": "^3.0.1"
+    }
+}
