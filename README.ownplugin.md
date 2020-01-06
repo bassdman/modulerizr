@@ -1,24 +1,8 @@
 # Modulerizr
 
-> Integrate a powerful, component based architecture to your legacy project in just a few steps
+## Create your own Plugins
 
-[![npm version](https://img.shields.io/npm/v/modulerizr.svg)](https://www.npmjs.com/package/modulerizr)
-[![npm downloads](https://img.shields.io/npm/dt/modulerizr.svg)](https://www.npmjs.com/package/modulerizr)
-[![npm downloads](https://img.shields.io/github/license/mashape/apistatus.svg)](https://www.npmjs.com/package/modulerizr)
 
-Quick Links
-   - [Configuration](#modulerizrconfig)
-   - [Features](#features)
-   - [Plugins](#modulerizr-plugins)
-   - [ModulerizrWebpackPlugin](https://www.npmjs.com/package/modulerizr-webpack-plugin)
-
-## Install
-
-``` shell
-    npm install modulerizr --save-dev
-```
-
->Modulerizr is in Gamma-Version now. This codebase is stable and there will be no more features until final release (~01/02 2020). More tests will be added and documentation will be completed. 
 
 
 <!-- - [Quicklink to the API](#api-description) -->
@@ -837,7 +821,7 @@ Declared multiple times in a src-file it would be rendered like this:
     ...
 </div>
 ```
-### Modulerizr-Plugins
+### Plugins
 You can use any other webpack-plugin to add more features you want, for example for bundling,... 
 But there are some specific modulerizr-plugins that exist.
 #### Modulerizr-jsrender-plugin
@@ -884,13 +868,14 @@ const {StyleExtHtmlWebpackPlugin } = require('style-ext-html-webpack-plugin');
 ```
 
 #### Write your own Plugin
-[Read here how to write your own Plugins]().
+
 
 ### Features in future
 - inline-templates in src-files, marked with a "inline-template"-Attribute.
 - multiple components per file
 - support attribute component declarations
 - scoped link tags
+- 
 
 ## Contribution
 - You have some ideas how to make modulerizr more simple?
