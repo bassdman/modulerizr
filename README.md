@@ -18,9 +18,6 @@ Quick Links
     npm install modulerizr --save-dev
 ```
 
->Modulerizr is in Gamma-Version now. This codebase is stable and there will be no more features until final release (~01/02 2020). More tests will be added and documentation will be completed. 
-
-
 <!-- - [Quicklink to the API](#api-description) -->
 
 ## The Problem

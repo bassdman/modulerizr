@@ -67,7 +67,7 @@ modulerizr.run({
 })
 ```
 
-When we execut it, we will already have a log "Starwars plugin is executed". Yippeeee :)
+When we execute it, we will already have a log "Starwars plugin is executed". Yippeeee :)
 
 #### Extend some hooks
 Webpack uses hooks to modify the webpack context. There are default webpack-hooks that can be used, with modulerizr you have some extra hooks. Look up here for the [standard-webpack-hooks](https://webpack.js.org/api/compiler-hooks/).
@@ -101,9 +101,9 @@ class StarWarsPlugin {
     apply(compiler) {
         // We want the star wars data to be added on top of the rendered Data. So we use the "modulerizrFileRendered"-Hook
        compiler.hooks.modulerizrFileRendered.tap('StarWarsPlugin', ($, srcFile, context) => {
-           const $body = $('head');
-           $body.append("<script>console.log('Let's add some starwars-data');</script>");
-            // or in short: $('body').append("<script>console.log('Let's add some starwars-data');</script>");
+           const $head = $('head');
+           $head.append("<script>console.log('Let's add some starwars-data');</script>");
+            // or in short: $('head').append("<script>console.log('Let's add some starwars-data');</script>");
         });   
     }
 }
@@ -129,16 +129,30 @@ class StarWarsPlugin {
 
         // We want the star wars data to be rendered in each file. So we use the "modulerizrFileRendered"-Hook
        compiler.hooks.modulerizrFileRendered.tap('StarWarsPlugin', ($, srcFile, context) => {
-           const $body = $('head');
+           const $head = $('head');
            const starwarsDataAsString = JSON.stringify(context.starwarsCharacters.results);
-           $body.append(`<script>var starwarsdata = ${starwarsDataAsString};</script>`);
+           $head.append(`<script>var starwarsdata = ${starwarsDataAsString};</script>`);
         });   
     }
 }
 exports.StarWarsPlugin = StarWarsPlugin;
 ```
 That's it. Now we have added star wars data to every src-file. Of course this shouldn't be a real usecase. But it shows how to create new Plugins.
+The result looks like this:
+```html
+<html ><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Starwars-plugin - sourcefile 1 </title>
+<script>var starwarsdata = [{"name":"Luke Skywalker","height":"172","mass":"77","hair_color":"blond","skin_color":"fair","eye_color":"blue","birth_year":"19BBY","gender":"male","homeworld":"https://swapi.co/api/planets/1/","films":["https://swapi.co/api/films/2/","https://swapi.co/api/films/6/","https://swapi.co/api/films/3/","https://swapi.co/api/films/1/","https://swapi.co/api/films/7/"],"species":["https://swapi.co/api/species/1/"],"vehicles":["https://swapi.co/api/vehicles/14/","https://swapi.co/api/vehicles/30/"],"starships":["https://swapi.co/api/starships/12/","https://swapi.co/api/starships/22/"],"created":"2014-12-09T13:50:51.644000Z","edited":"2014-12-20T21:17:56.891000Z","url":"https://swapi.co/api/people/1/"},...];</script></head>
 
+<body>
+    Now we can use the server data from the api.
+
+
+</body></html>
+```
 
 ### Hooks
 There are some specific modulerizr-Hooks. They are executed in the following order:
