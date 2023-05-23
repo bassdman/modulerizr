@@ -16,7 +16,7 @@
     "author": "Manuel Gelsen",
     "license": "MIT",
     "dependencies": {
-        "modulerizr": "~1.7.0-gamma"
+        "modulerizr": "../../"
     },
     "devDependencies": {
         "node-fetch": "^2.6.0",
